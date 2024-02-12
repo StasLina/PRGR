@@ -14,9 +14,6 @@ public class Document {
 
     public string GetKeyWords() {
         string ReturnValue = "[";
-        //foreach(string Keyword in Keywords) {
-        //    ReturnValue += Keyword + " ";
-        //}
         if (Keywords.Count>0) {
             var LatElement = Keywords.Count - 1;
             int CurElement = 0;
@@ -32,16 +29,11 @@ public class Document {
     public Document(string title, string content) {
         Title = title;
         Content = content;
-        Author = "Станислав хозяенок";
-        Keywords = new List<string>() { "Работа",  "файл" };
+        Author = "Станислав Хозяенок";
+        Keywords = new List<string>() { "Учёба",  "Файл" };
         Theme = "Старание и труд все перебьют";
         FilePath = "C:/КиберКотлетыЛучшеВсех/";
     }
-
-    public virtual void Open() {
-        Console.WriteLine("Opening документ: " + Title);
-    }
-
     public virtual string GetTitle() {
         return Title;
     }
@@ -50,7 +42,10 @@ public class Document {
 
 // Класс для документов MS Word
 public class WordDocument : Document {
+    public uint CountPages{ get; set; }
+
     public WordDocument(string title, string content) : base(title, content) {
+        CountPages = 3;
     }
 
     public override void GetDocumentInfo() {
@@ -59,6 +54,7 @@ public class WordDocument : Document {
         Console.WriteLine($"Ключевые слова {GetKeyWords()}");
         Console.WriteLine($"Тема: {Theme}");
         Console.WriteLine($"Путь файла: {FilePath}");
+        Console.WriteLine($"Количество страниц: {CountPages}");
         Console.WriteLine("Содержимое ");
         Console.WriteLine(Content);
     }
@@ -66,7 +62,9 @@ public class WordDocument : Document {
 
 // Класс для документов PDF
 public class PdfDocument : Document {
+    public string FormFactor { get; set; }
     public PdfDocument(string title, string content) : base(title, content) {
+        FormFactor = "A4";
     }
     public override void GetDocumentInfo() {
         Console.WriteLine("PDF документ: " + Title);
@@ -74,14 +72,18 @@ public class PdfDocument : Document {
         Console.WriteLine($"Ключевые слова {GetKeyWords()}");
         Console.WriteLine($"Тема: {Theme}");
         Console.WriteLine($"Путь файла: {FilePath}");
-        Console.WriteLine("Содержимое ");
+        Console.WriteLine($"Форм фактор: {FormFactor}");
+        Console.WriteLine("Содержимое: ");
         Console.WriteLine(Content);
     }
 }
 
 // Класс для документов MS Excel
 public class ExcelDocument : Document {
+    public uint CountSheets { get; set; }
+
     public ExcelDocument(string title, string content) : base(title, content) {
+        CountSheets = 5;
     }
 
     public override void GetDocumentInfo() {
@@ -90,14 +92,18 @@ public class ExcelDocument : Document {
         Console.WriteLine($"Ключевые слова {GetKeyWords()}");
         Console.WriteLine($"Тема: {Theme}");
         Console.WriteLine($"Путь файла: {FilePath}");
-        Console.WriteLine("Содержимое ");
+        Console.WriteLine($"Количетсво листов: {CountSheets}");
+        Console.WriteLine("Содержимое: ");
         Console.WriteLine(Content);
     }
 }
 
 // Класс для текстовых документов TXT
 public class TxtDocument : Document {
+    public uint CountChars { get; set; }
+
     public TxtDocument(string title, string content) : base(title, content) {
+        CountChars = 123;
     }
 
     public override void GetDocumentInfo() {
@@ -106,14 +112,18 @@ public class TxtDocument : Document {
         Console.WriteLine($"Ключевые слова {GetKeyWords()}");
         Console.WriteLine($"Тема: {Theme}");
         Console.WriteLine($"Путь файла: {FilePath}");
-        Console.WriteLine("Содержимое ");
+        Console.WriteLine($"Количество символов: {CountChars}");
+        Console.WriteLine("Содержимое: ");
         Console.WriteLine(Content);
     }
 }
 
 // Класс для документов HTML
 public class HtmlDocument : Document {
+    public string PublishDateString { get; set; }
+
     public HtmlDocument(string title, string content) : base(title, content) {
+        PublishDateString = "2024.02.12 05:23";
     }
 
     public override void GetDocumentInfo() {
@@ -122,7 +132,8 @@ public class HtmlDocument : Document {
         Console.WriteLine($"Ключевые слова {GetKeyWords()}");
         Console.WriteLine($"Тема: {Theme}");
         Console.WriteLine($"Путь файла: {FilePath}");
-        Console.WriteLine("Содержимое ");
+        Console.WriteLine($"Дата публикации: {PublishDateString}");
+        Console.WriteLine("Содержимое: ");
         Console.WriteLine(Content);
     }
 }
@@ -184,8 +195,11 @@ public class DocumentManager {
                 case ConsoleKey.Enter:
                     ShowDocumentInfo(ListDocuments.ElementAt(CurrElementIndex));
                     break;
+                case ConsoleKey.Q:
+                case ConsoleKey.Escape:
+                case ConsoleKey.Spacebar:
+                    return;
                 default:
-                    Console.WriteLine("Нажмите один или два");
                     break;
             };
         }
