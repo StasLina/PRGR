@@ -5,51 +5,50 @@ using System.Runtime;
 
 static class GlobalVars{
 public
-    static String AppVersion = "v1.2023_02_07_1";
+    static String AppVersion = "v1.2023_02_12_1";
 public
     static String StartMessage = "Добро пожловать, Администратор.Введите следующее\n 1) Возведение числа в степень \n 2) Перенос второй цифпы в конец циферного ряда";
 }
 
-public class MathLibrary
-{
-    public static int CalculatePow(int sourse_number,uint number_degree){
-        if (number_degree == 0) return 1;
+public class MathLibrary{
+    public static int CalculatePow(int SourseNumber,uint NumberCountDegree){
+        if (NumberCountDegree == 0) return 1;
 
-        int result_number = sourse_number;
+        int ResultNumber = SourseNumber;
         
-        for(uint current_iteration = 1; current_iteration!=number_degree; ++current_iteration){
-            result_number *= sourse_number;
+        for(uint CurrentIteration = 1; CurrentIteration!=NumberCountDegree; ++CurrentIteration){
+            ResultNumber *= SourseNumber;
         }
-        return result_number;
+        return ResultNumber;
     }
-    public static String SwapSecondaryValue(String input_string){
-        String res_str = "";
-        res_str += input_string[0];
-        res_str += input_string.Substring(2);
-        res_str += input_string[1];
-        return res_str;
+    public static String SwapSecondaryValue(String InputString){
+        String ResultStr = "";
+        ResultStr += InputString[0];
+        ResultStr += InputString.Substring(2);
+        ResultStr += InputString[1];
+        return ResultStr;
     }
 }
 
 class Application{
     static void HandleCalcPow(){
         System.Console.Write("\n");
-        int source_number;
-        uint degree;
+        int SourceNumber;
+        uint CountDegree;
         System.Console.WriteLine("Введите исходное число ");
-        source_number = Int32.Parse(System.Console.ReadLine());
+        SourceNumber = Int32.Parse(System.Console.ReadLine());
         System.Console.WriteLine("Введите степень ");
-        degree = UInt32.Parse(System.Console.ReadLine());
+        CountDegree = UInt32.Parse(System.Console.ReadLine());
         System.Console.WriteLine("Результат");
-        System.Console.WriteLine(MathLibrary.CalculatePow(source_number, degree));
+        System.Console.WriteLine(MathLibrary.CalculatePow(SourceNumber, CountDegree));
     }
     static void HandleSwapSecondaryValue(){
         System.Console.Write("\n");
-        String source_number = "";
+        String SourceNumber = "";
         System.Console.WriteLine("Введите исходное число ");
-        source_number = System.Console.ReadLine();
+        SourceNumber = System.Console.ReadLine();
         System.Console.WriteLine("Результат");
-        System.Console.WriteLine(MathLibrary.SwapSecondaryValue(source_number));
+        System.Console.WriteLine(MathLibrary.SwapSecondaryValue(SourceNumber));
     }
     public static void Main(){
         Console.WriteLine(GlobalVars.AppVersion);
