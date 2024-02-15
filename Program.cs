@@ -26,9 +26,9 @@ public class Document {
         ReturnValue += "]";
         return ReturnValue;
     }
-    public Document(string title, string content) {
-        Title = title;
-        Content = content;
+    public Document(string NewTitle, string NewContent) {
+        Title = NewTitle;
+        Content = NewContent;
         Author = "Станислав Хозяенок";
         Keywords = new List<string>() { "Учёба",  "Файл" };
         Theme = "Старание и труд все перебьют";
@@ -44,7 +44,7 @@ public class Document {
 public class WordDocument : Document {
     public uint CountPages{ get; set; }
 
-    public WordDocument(string title, string content) : base(title, content) {
+    public WordDocument(string Title, string Content) : base(Title, Content) {
         CountPages = 3;
     }
 
@@ -63,7 +63,7 @@ public class WordDocument : Document {
 // Класс для документов PDF
 public class PdfDocument : Document {
     public string FormFactor { get; set; }
-    public PdfDocument(string title, string content) : base(title, content) {
+    public PdfDocument(string Title, string Content) : base(Title, Content) {
         FormFactor = "A4";
     }
     public override void GetDocumentInfo() {
@@ -82,7 +82,7 @@ public class PdfDocument : Document {
 public class ExcelDocument : Document {
     public uint CountSheets { get; set; }
 
-    public ExcelDocument(string title, string content) : base(title, content) {
+    public ExcelDocument(string Title, string Content) : base(Title, Content) {
         CountSheets = 5;
     }
 
@@ -102,7 +102,7 @@ public class ExcelDocument : Document {
 public class TxtDocument : Document {
     public uint CountChars { get; set; }
 
-    public TxtDocument(string title, string content) : base(title, content) {
+    public TxtDocument(string Title, string Content) : base(Title, Content) {
         CountChars = 123;
     }
 
@@ -122,7 +122,7 @@ public class TxtDocument : Document {
 public class HtmlDocument : Document {
     public string PublishDateString { get; set; }
 
-    public HtmlDocument(string title, string content) : base(title, content) {
+    public HtmlDocument(string Title, string Content) : base(Title, Content) {
         PublishDateString = "2024.02.12 05:23";
     }
 
@@ -141,15 +141,15 @@ public class HtmlDocument : Document {
 public class DocumentManager {
     private int CurrElementIndex, ElementMaxIndex, CountElements;
     private List<Document> ListDocuments;
-    private static DocumentManager instance;
+    private static DocumentManager Instance;
 
     private DocumentManager() { }
 
     public static DocumentManager GetInstance() {
-        if (instance == null) {
-            instance = new DocumentManager();
+        if (Instance == null) {
+            Instance = new DocumentManager();
         }
-        return instance;
+        return Instance;
     }
 
     void DrawDirectory() {
@@ -204,16 +204,16 @@ public class DocumentManager {
             };
         }
     }
-    public void ShowDocumentInfo(Document document) {
+    public void ShowDocumentInfo(Document InputDocument) {
         Console.Clear();
         Console.WriteLine("Document Information:");
-        document.GetDocumentInfo();
+        InputDocument.GetDocumentInfo();
         Console.ReadKey();
     }
 }
 
 class Program {
-    static void Main(string[] args) {
+    static void Main(string[] Args) {
         List<Document> ListDocuments = new List<Document>();
         ListDocuments.Add(new WordDocument("Полезные команды.docx", "Это Word документ."));
         ListDocuments.Add(new PdfDocument("Дипломная работа.pdf", "Это PDF документ."));
