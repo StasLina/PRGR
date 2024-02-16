@@ -175,7 +175,7 @@ public class DocumentManager {
             ++CurrElementIndex;
         }
     }
-    public void ChooseDocument(List<Document> InputListDocuments){
+    public void ChooseDocument(List<Document> InputListDocuments) {
         ListDocuments = InputListDocuments;
         CountElements = ListDocuments.Count;
         CurrElementIndex = 0;
