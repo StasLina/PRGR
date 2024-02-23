@@ -83,7 +83,7 @@ class Application {
     }
     public static void FillRandomMatrix(int Choose = 0) {
         Console.WriteLine("Заполнение матрицы рандомными значениями");
-        ConsoleKey PressedKey;;
+        ConsoleKey PressedKey; ;
         switch (Choose) {
             case 1:
                 PressedKey = ConsoleKey.D1;
@@ -127,7 +127,7 @@ class Application {
                 while (true) {
                     try {
                         Console.Write($"Строка {IndexRow} Столбец {IndexColumn} = ");
-                        string InputString = Console.ReadLine(); 
+                        string InputString = Console.ReadLine();
                         ReturnValue[IndexRow][IndexColumn] = MatrixValue.Parse(InputString);
                         break;
                     }
@@ -135,7 +135,7 @@ class Application {
                         Console.WriteLine("Попробуйте снова");
                     }
                 }
-                
+
             }
         }
         return ReturnValue;
@@ -346,7 +346,7 @@ class Application {
                 break;
         }
     }
-        public static void Main(string[] args) {
+    public static void Main(string[] args) {
         string functiality = "Функциональность\r\n1) - Создание Основной матрицы\r\n2) - Создание Дополнительной матрицы\r\n3) - Заполнить случайными значениями\r\n4) - Заполнить ручками\r\n5) - Вывести матрицу\r\n6) - Вывести обратную матрицу\r\n7) - Получить хэш код\r\n8) - Сравнить матрицы";
         while (true) {
             Console.Clear();
@@ -502,11 +502,11 @@ class MatrixUtils {
             for (CurrentCollumn = 0; CurrentCollumn < ColumnCount; ++CurrentCollumn) {
                 RetCode = InputMatrix.GetValue(ref TempValue, CurrentRow, CurrentCollumn);
                 if (RetCode != 0) {
-                    throw new SmartMatrixException("0");   
+                    throw new SmartMatrixException("0");
                 }
                 OutputString += TempValue + " ";
             }
-            OutputString +="\n";
+            OutputString += "\n";
         }
     }
 
@@ -574,7 +574,7 @@ class MatrixUtils {
                     if (RetCode != 0) {
                         throw new SmartMatrixException("IsMatrixEqual");
                     }
-                    if (LeftValue  != RightValue) ;
+                    if (LeftValue != RightValue) ;
                     return false;
                 }
             }
@@ -588,7 +588,7 @@ class MatrixUtils {
 
         MatrixValue Value = 0;
         if (SourceMatrix.GetColumnCount() == 1) {
-            if(SourceMatrix.GetValue(ref Value , 1, 1) != 0) {
+            if (SourceMatrix.GetValue(ref Value, 1, 1) != 0) {
                 return 1;
             }
             MatrixCollection = MatrixCollection.Append(new MatrixRow() { Value });
@@ -618,7 +618,7 @@ class MatrixUtils {
         if (SourceMatrix.GetColumnCount() != SourceMatrix.GetRowCount()) {
             return 1;
         }
-        
+
         OutDeterminant = 0;
         double Determinant = 0, CurIndexValue = 0, CurIndexMinorDeterminantValue = 0;
         int CurrentColumn, ColumnCount = SourceMatrix.GetColumnCount();
@@ -681,7 +681,7 @@ class MatrixUtils {
         return 0;
     }
 
-    public int  MullMatrix(ref Matrix SourceMatrix, MatrixValue Value) {
+    public int MullMatrix(ref Matrix SourceMatrix, MatrixValue Value) {
         int RowCount = SourceMatrix.GetRowCount(), ColumnCount = SourceMatrix.GetColumnCount()
     , CurrentRow, CurrentCollumn, RetCode;
         MatrixValue NewValue = 0;
@@ -739,8 +739,8 @@ class SmartMatrix : Matrix, ICloneable, IComparable<SmartMatrix> {
     public void CalcDeterminant() {
         Matrix BaseTypeClass = (Matrix)this;
         int RetCode = 0;
-        RetCode  = Utils.DetermineDeterminant(ref BaseTypeClass, ref this.Determinant);
-        if(RetCode != 0) {
+        RetCode = Utils.DetermineDeterminant(ref BaseTypeClass, ref this.Determinant);
+        if (RetCode != 0) {
             throw new SmartMatrixException("Error calc determinant");
         }
     }
@@ -758,12 +758,12 @@ class SmartMatrix : Matrix, ICloneable, IComparable<SmartMatrix> {
         SmartMatrix OutSmartMatrix = new SmartMatrix();
         Matrix OutMatrix = OutSmartMatrix;
         int RetCode = 0;
-        RetCode  = Utils.GetInverseMatrix(ref BasedTypeObject,  ref OutMatrix);
+        RetCode = Utils.GetInverseMatrix(ref BasedTypeObject, ref OutMatrix);
         if (RetCode != 0) {
-            throw new 
+            throw new
                 SmartMatrixException("Error calc determinant");
         }
-            OutSmartMatrix.CalcDeterminant();
+        OutSmartMatrix.CalcDeterminant();
         return OutSmartMatrix;
     }
     public SmartMatrix(ref IEnumerable<MatrixRow> IList) : base(ref IList) {
@@ -804,7 +804,7 @@ class SmartMatrix : Matrix, ICloneable, IComparable<SmartMatrix> {
         return true;
     }
     public bool EqualsValuse(object OtherObjet) {
-        if (Equals(OtherObjet)){
+        if (Equals(OtherObjet)) {
             SmartMatrix OtherMatrix = (SmartMatrix)OtherObjet;
             if (this.Determinant == OtherMatrix.Determinant) {
                 Matrix ThisObjectMatrixType = this,
@@ -820,18 +820,18 @@ class SmartMatrix : Matrix, ICloneable, IComparable<SmartMatrix> {
         return base.GetHashCode();
     }
 
-public static bool operator > (SmartMatrix Left, SmartMatrix Right) {
+    public static bool operator >(SmartMatrix Left, SmartMatrix Right) {
         return Left.Determinant > Right.Determinant;
     }
 
     public static bool operator <(SmartMatrix Left, SmartMatrix Right) {
         return Left.Determinant < Right.Determinant;
     }
-    public static bool operator == (SmartMatrix Left, SmartMatrix Right) {
-        
+    public static bool operator ==(SmartMatrix Left, SmartMatrix Right) {
+
         return Left.Determinant == Right.Determinant;
     }
-    public static bool operator != (SmartMatrix Left, SmartMatrix Right) {
+    public static bool operator !=(SmartMatrix Left, SmartMatrix Right) {
         return Left.Determinant != Right.Determinant;
     }
 
@@ -846,7 +846,7 @@ public static bool operator > (SmartMatrix Left, SmartMatrix Right) {
 public class SmartMatrixException : Exception {
     public SmartMatrixException(string message)
        : base(message) { }
-    public override  string ToString() {
+    public override string ToString() {
         return base.ToString();
     }
 }
