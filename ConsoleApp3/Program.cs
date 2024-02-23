@@ -15,7 +15,7 @@ class MatrixRow : List<MatrixValue> {
     public MatrixRow() : base() { }
     public MatrixRow(IEnumerable<MatrixValue> IList) : base(IList) { }
     public MatrixRow(Int32 ColumnCount) : base(ColumnCount) {
-        for (Int32 CurColIndex = 0; CurColIndex < ColumnCount; ++CurColIndex) {
+        for (Int32 сurColIndex = 0; сurColIndex < ColumnCount; ++сurColIndex) {
             this.Add(0);
         }
     }
@@ -24,14 +24,14 @@ class MatrixData : List<MatrixRow> {
     public MatrixData() : base() { }
     public MatrixData(Int32 RowCount) : base(RowCount) { }
     public MatrixData(Int32 RowCount, Int32 ColumnCount) : base() {
-        for (Int32 CurRowIndex = 0; CurRowIndex < RowCount; ++CurRowIndex) {
+        for (Int32 сurrowIndex = 0; сurrowIndex < RowCount; ++сurrowIndex) {
             this.Add(new MatrixRow(ColumnCount));
         }
     }
     public MatrixData(IEnumerable<MatrixRow> IList) : base(IList) { }
     public MatrixData(ref IEnumerable<IEnumerable<MatrixValue>> IList) {
         int RowCount = IList.Count();
-        for (int RowIndex = 0; RowIndex < RowCount; ++RowIndex) { this.Add(new MatrixRow(IList.ElementAt(RowIndex))); }
+        for (int rowIndex = 0; rowIndex < RowCount; ++rowIndex) { this.Add(new MatrixRow(IList.ElementAt(rowIndex))); }
     }
 }
 
@@ -39,8 +39,13 @@ class MatrixData : List<MatrixRow> {
 class Application {
     public static SmartMatrix Matr1, Matr2;
     public static void CreateMatrix(out SmartMatrix Matr1) {
+
+        SmartMatrix matr = new SmartMatrix();
+        //new IEnumerable<MatrixValue> { 1,2,4}
+        //MatrixData = new MatrixData()
+
         Console.WriteLine("Создание матрицы");
-        Console.WriteLine("Ведеите размер квадратной матрицы матрицы");
+        Console.WriteLine("Введите размер квадратной матрицы матрицы");
 
         int SizeMatrix;
         string SizeMatrixString = "";
@@ -94,7 +99,7 @@ class Application {
             default:
                 PressedKey = Console.ReadKey().Key;
                 Console.WriteLine();
-                Console.WriteLine("1 - Основаная матрица");
+                Console.WriteLine("1 - Основная матрица");
                 Console.WriteLine("2 - Дополнительная матрица");
                 PressedKey = Console.ReadKey().Key;
                 Console.WriteLine();
@@ -142,7 +147,7 @@ class Application {
     }
     public static void ChooseFillMatrix() {
         Console.WriteLine("Заполнение матрицы значениями");
-        Console.WriteLine("1 - Основаная матрица");
+        Console.WriteLine("1 - Основная матрица");
         Console.WriteLine("2 - Дополнительная матрица");
         ConsoleKey PressedKey = Console.ReadKey().Key;
         Console.WriteLine();
@@ -171,7 +176,7 @@ class Application {
     }
     public static void PrintMatrix() {
         Console.WriteLine("Вывод матрицы");
-        Console.WriteLine("1 - Основаная матрица");
+        Console.WriteLine("1 - Основная матрица");
         Console.WriteLine("2 - Дополнительная матрица");
         ConsoleKey PressedKey = Console.ReadKey().Key;
         Console.WriteLine();
@@ -197,7 +202,7 @@ class Application {
 
     public static void GetHashCode() {
         Console.WriteLine("Вывод матрицы");
-        Console.WriteLine("1 - Основаная матрица");
+        Console.WriteLine("1 - Основная матрица");
         Console.WriteLine("2 - Дополнительная матрица");
         ConsoleKey PressedKey = Console.ReadKey().Key;
         Console.WriteLine();
@@ -223,7 +228,7 @@ class Application {
 
     public static void PrintInverseMatrix() {
         Console.WriteLine("Вывод обратной матрицы");
-        Console.WriteLine("1 - Основаная матрица");
+        Console.WriteLine("1 - Основная матрица");
         Console.WriteLine("2 - Дополнительная матрица");
         SmartMatrix Inverse;
         ConsoleKey PressedKey = Console.ReadKey().Key;
@@ -251,7 +256,7 @@ class Application {
     }
     public static void ChooseComareMatrix() {
         if (Matr1 is null) {
-            Console.WriteLine("Основаная Матрица не создана");
+            Console.WriteLine("Основная Матрица не создана");
             return;
         }
         if (Matr2 is null) {
@@ -430,20 +435,23 @@ class Matrix : ICloneable {
         CloneRef(ref NewObject, ref ThisObject);
     }
     public void CloneRef(ref Matrix NewObject, ref Matrix OldObject) {
-        NewObject.Data = OldObject.Data;
+        NewObject.Data = new MatrixData(OldObject.Data);
         NewObject.RowCount = OldObject.RowCount;
         NewObject.ColumnCount = OldObject.ColumnCount;
     }
     ///return 0 если индексы валидны 1 - не валиден индекс строки 2 - не валиден индекс столбца 3 - количество столбцов строки меньше глобального количества столбцов
-    int IsIndexValid(int RowIndex, int ColumnIndex) {
-        if (RowIndex < 0 || RowIndex >= (RowCount)) {
+    int IsIndexValid(int rowIndex, int ColumnIndex) {
+        if (rowIndex < 0 || rowIndex >= (RowCount)) {
             return 1;
         }
         if (ColumnIndex < 0 || ColumnIndex >= (ColumnCount)) {
             return 2;
         }
-        if (ColumnIndex >= this.Data[RowIndex].Count) {
+        if (ColumnIndex>= this.Data.Count) {
             return 3;
+        }
+        if (ColumnIndex >= this.Data[rowIndex].Count) {
+            return 4;
         }
         return 0;
     }
@@ -454,26 +462,29 @@ class Matrix : ICloneable {
     public int GetColumnCount() {
         return ColumnCount;
     }
-    public int GetValue(ref MatrixValue Value, int RowIndex, int ColumnIndex) {
-        if (IsIndexValid(RowIndex, ColumnIndex) != 0) {
+    public int GetValue(MatrixValue Value, int rowIndex, int ColumnIndex) {
+        return GetValue(ref Value, rowIndex, ColumnIndex);
+    }
+    public int GetValue(ref MatrixValue Value, int rowIndex, int ColumnIndex) {
+        if (IsIndexValid(rowIndex, ColumnIndex) != 0) {
             return 1;
         }
-        Value = Data[RowIndex][ColumnIndex];
+        Value = Data[rowIndex][ColumnIndex];
         return 0;
     }
 
     //Unsafe
-    private MatrixValue GetValue(int RowIndex, int ColumnIndex) {
-        if (IsIndexValid(RowIndex, ColumnIndex) != 0) {
+    private MatrixValue GetValue(int rowIndex, int ColumnIndex) {
+        if (IsIndexValid(rowIndex, ColumnIndex) != 0) {
             return MatrixValue.MaxValue;
         }
-        return Data[RowIndex][ColumnIndex];
+        return Data[rowIndex][ColumnIndex];
     }
-    public int SetValue(ref MatrixValue Value, int RowIndex, int ColumnIndex) {
-        if (IsIndexValid(RowIndex, ColumnIndex) != 0) {
+    public int SetValue(MatrixValue Value, int rowIndex, int ColumnIndex) {
+        if (IsIndexValid(rowIndex, ColumnIndex) != 0) {
             return 1;
         }
-        Data[RowIndex][ColumnIndex] = Value;
+        Data[rowIndex][ColumnIndex] =  Value;
         return 0;
     }
     public void SetSize(int RowCount, int ColumnCount) {
@@ -495,14 +506,14 @@ class MatrixUtils {
 
     public void PrintMatrix(ref Matrix InputMatrix, ref string OutputString) {
         int RowCount = InputMatrix.GetRowCount(), ColumnCount = InputMatrix.GetColumnCount()
-    , CurrentRow, CurrentCollumn;
+    , currentRow, currentCollumn;
         MatrixValue TempValue = 0;
         int RetCode;
-        for (CurrentRow = 0; CurrentRow < RowCount; ++CurrentRow) {
-            for (CurrentCollumn = 0; CurrentCollumn < ColumnCount; ++CurrentCollumn) {
-                RetCode = InputMatrix.GetValue(ref TempValue, CurrentRow, CurrentCollumn);
+        for (currentRow = 0; currentRow < RowCount; ++currentRow) {
+            for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
+                RetCode = InputMatrix.GetValue(ref TempValue, currentRow, currentCollumn);
                 if (RetCode != 0) {
-                    throw new SmartMatrixException("0");
+                    throw new SmartMatrixExceptionControl($"Ошибка получения значения матрицы по индексам {currentRow} {currentCollumn}");
                 }
                 OutputString += TempValue + " ";
             }
@@ -524,12 +535,12 @@ class MatrixUtils {
     }
     public void FillRandomValues(ref Matrix InputMatrix) {
         int RowCount = InputMatrix.GetRowCount(), ColumnCount = InputMatrix.GetColumnCount()
-            , CurrentRow, CurrentCollumn;
+            , currentRow, currentCollumn;
         MatrixValue NewValue;
-        for (CurrentRow = 0; CurrentRow < RowCount; ++CurrentRow) {
-            for (CurrentCollumn = 0; CurrentCollumn < ColumnCount; ++CurrentCollumn) {
+        for (currentRow = 0; currentRow < RowCount; ++currentRow) {
+            for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
                 NewValue = GetRandomMatrixValue(-100, 100);
-                InputMatrix.SetValue(ref NewValue, CurrentRow, CurrentCollumn);
+                InputMatrix.SetValue(NewValue, currentRow, currentCollumn);
             }
         }
     }
@@ -539,19 +550,19 @@ class MatrixUtils {
             return 1;
         }
         int RowCount = MatrixLeft.GetRowCount(), ColumnCount = MatrixLeft.GetColumnCount()
-            , CurrentRow, CurrentCollumn;
+            , currentRow, currentCollumn;
         MatrixValue LeftValue = 0, RightValue = 0;
         int RetCode = 0;
 
-        for (CurrentRow = 0; CurrentRow < RowCount; ++CurrentRow) {
-            for (CurrentCollumn = 0; CurrentCollumn < ColumnCount; ++CurrentCollumn) {
-                RetCode = MatrixLeft.GetValue(ref LeftValue, CurrentRow, CurrentCollumn);
-                RetCode |= MatrixRight.GetValue(ref RightValue, CurrentRow, CurrentCollumn);
+        for (currentRow = 0; currentRow < RowCount; ++currentRow) {
+            for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
+                RetCode = MatrixLeft.GetValue(ref LeftValue, currentRow, currentCollumn);
+                RetCode |= MatrixRight.GetValue(ref RightValue, currentRow, currentCollumn);
                 if (RetCode != 0) {
-                    throw new SmartMatrixException("AddMatrix");
+                    throw new SmartMatrixExceptionControl($"Ошибка получения значения матрицы по индексам {currentRow} {currentCollumn}");
                 }
                 LeftValue += RightValue;
-                MatrixLeft.SetValue(ref LeftValue, CurrentRow, CurrentCollumn);
+                MatrixLeft.SetValue(LeftValue, currentRow, currentCollumn);
             }
         }
         return 0;
@@ -566,13 +577,13 @@ class MatrixUtils {
         if (MatrixLeft.GetColumnCount() == MatrixRight.GetColumnCount() && MatrixLeft.GetRowCount() == MatrixRight.GetRowCount()) {
             MatrixValue LeftValue = 0, RightValue = 0;
             int RetCode = 0;
-            int RowCount = MatrixLeft.GetRowCount(), ColumnCount = MatrixLeft.GetColumnCount(), CurrentRow, CurrentCollumn;
-            for (CurrentRow = 0; CurrentRow < RowCount; ++CurrentRow) {
-                for (CurrentCollumn = 0; CurrentCollumn < ColumnCount; ++CurrentCollumn) {
-                    RetCode = MatrixLeft.GetValue(ref LeftValue, CurrentRow, CurrentCollumn);
-                    RetCode |= MatrixRight.GetValue(ref RightValue, CurrentRow, CurrentCollumn);
+            int RowCount = MatrixLeft.GetRowCount(), ColumnCount = MatrixLeft.GetColumnCount(), currentRow, currentCollumn;
+            for (currentRow = 0; currentRow < RowCount; ++currentRow) {
+                for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
+                    RetCode = MatrixLeft.GetValue(ref LeftValue, currentRow, currentCollumn);
+                    RetCode |= MatrixRight.GetValue(ref RightValue, currentRow, currentCollumn);
                     if (RetCode != 0) {
-                        throw new SmartMatrixException("IsMatrixEqual");
+                        throw new SmartMatrixExceptionControl($"Ошибка получения значения матрицы по индексам {currentRow} {currentCollumn}") ;
                     }
                     if (LeftValue != RightValue) ;
                     return false;
@@ -582,8 +593,8 @@ class MatrixUtils {
         return true;
     }
 
-    int GetMinorMatrix(ref Matrix SourceMatrix, int RowIndex, int ColumnIndex, ref Matrix OutputMatrix) {
-        int RowCount = SourceMatrix.GetRowCount(), ColumnCount = SourceMatrix.GetColumnCount(), CurrentRow, CurrentCollumn;
+    int GetMinorMatrix(ref Matrix SourceMatrix, int rowIndex, int ColumnIndex, ref Matrix OutputMatrix) {
+        int RowCount = SourceMatrix.GetRowCount(), ColumnCount = SourceMatrix.GetColumnCount(), currentRow, currentCollumn;
         IEnumerable<IEnumerable<MatrixValue>> MatrixCollection = new MatrixData();
 
         MatrixValue Value = 0;
@@ -594,16 +605,16 @@ class MatrixUtils {
             MatrixCollection = MatrixCollection.Append(new MatrixRow() { Value });
         }
         else {
-            for (CurrentRow = 0; CurrentRow < RowCount; ++CurrentRow) {
+            for (currentRow = 0; currentRow < RowCount; ++currentRow) {
                 IEnumerable<MatrixValue> RowCollection = new MatrixRow();
-                if (CurrentRow == RowIndex) {
+                if (currentRow == rowIndex) {
                     continue;
                 }
-                for (CurrentCollumn = 0; CurrentCollumn < ColumnCount; ++CurrentCollumn) {
-                    if (CurrentCollumn == ColumnIndex) {
+                for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
+                    if (currentCollumn == ColumnIndex) {
                         continue;
                     }
-                    if (SourceMatrix.GetValue(ref Value, CurrentRow, CurrentCollumn) != 0) {
+                    if (SourceMatrix.GetValue(ref Value, currentRow, currentCollumn) != 0) {
                         return 1;
                     }
                     RowCollection = RowCollection.Append(Value);
@@ -662,20 +673,21 @@ class MatrixUtils {
         if (DetermineDeterminant(ref SourceMatrix, ref Determinant) != 0) {
             return 1;
         }
-        OutMatrix = SourceMatrix;
+        OutMatrix.CloneRef(ref OutMatrix,ref SourceMatrix);
 
         int RowCount = SourceMatrix.GetRowCount(), ColumnCount = SourceMatrix.GetColumnCount()
-    , CurrentRow, CurrentCollumn;
-        MatrixValue NewValue = 0;
+    , currentRow, currentCollumn;
+        MatrixValue GettedValue = 0, NewValue;
         int RetCode = 0;
-        for (CurrentRow = 0; CurrentRow < RowCount; ++CurrentRow) {
-            for (CurrentCollumn = 0; CurrentCollumn < ColumnCount; ++CurrentCollumn) {
-                RetCode = SourceMatrix.GetValue(ref NewValue, CurrentRow, CurrentCollumn);
+        for (currentRow = 0; currentRow < RowCount; ++currentRow) {
+            for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
+                RetCode = SourceMatrix.GetValue(ref GettedValue, currentRow, currentCollumn);
                 if (RetCode != 0) {
                     return 1;
                 }
+                NewValue = GettedValue;
                 NewValue /= Determinant;
-                OutMatrix.SetValue(ref NewValue, CurrentRow, CurrentCollumn);
+                OutMatrix.SetValue(NewValue, currentRow, currentCollumn);
             }
         }
         return 0;
@@ -683,16 +695,16 @@ class MatrixUtils {
 
     public int MullMatrix(ref Matrix SourceMatrix, MatrixValue Value) {
         int RowCount = SourceMatrix.GetRowCount(), ColumnCount = SourceMatrix.GetColumnCount()
-    , CurrentRow, CurrentCollumn, RetCode;
+    , currentRow, currentCollumn, RetCode;
         MatrixValue NewValue = 0;
-        for (CurrentRow = 0; CurrentRow < RowCount; ++CurrentRow) {
-            for (CurrentCollumn = 0; CurrentCollumn < ColumnCount; ++CurrentCollumn) {
-                RetCode = SourceMatrix.GetValue(ref NewValue, CurrentRow, CurrentCollumn);
+        for (currentRow = 0; currentRow < RowCount; ++currentRow) {
+            for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
+                RetCode = SourceMatrix.GetValue(ref NewValue, currentRow, currentCollumn);
                 if (RetCode != 0) {
                     return 1;
                 }
                 NewValue *= Value;
-                SourceMatrix.SetValue(ref NewValue, CurrentRow, CurrentCollumn);
+                SourceMatrix.SetValue(NewValue, currentRow, currentCollumn);
             }
         }
         return 0;
@@ -741,7 +753,7 @@ class SmartMatrix : Matrix, ICloneable, IComparable<SmartMatrix> {
         int RetCode = 0;
         RetCode = Utils.DetermineDeterminant(ref BaseTypeClass, ref this.Determinant);
         if (RetCode != 0) {
-            throw new SmartMatrixException("Error calc determinant");
+            throw new SmartMatrixExceptionCalculating("Ошибка вычисления детерминанта");
         }
     }
     public void FillRandomValues() {
@@ -760,8 +772,7 @@ class SmartMatrix : Matrix, ICloneable, IComparable<SmartMatrix> {
         int RetCode = 0;
         RetCode = Utils.GetInverseMatrix(ref BasedTypeObject, ref OutMatrix);
         if (RetCode != 0) {
-            throw new
-                SmartMatrixException("Error calc determinant");
+            throw new SmartMatrixException("Ошибка получения инверсонной матрицы");
         }
         OutSmartMatrix.CalcDeterminant();
         return OutSmartMatrix;
@@ -845,6 +856,21 @@ class SmartMatrix : Matrix, ICloneable, IComparable<SmartMatrix> {
 
 public class SmartMatrixException : Exception {
     public SmartMatrixException(string message)
+       : base(message) { }
+    public override string ToString() {
+        return base.ToString();
+    }
+}
+public class SmartMatrixExceptionControl : SmartMatrixException {
+    public SmartMatrixExceptionControl(string message)
+       : base(message) { }
+    public override string ToString() {
+        return base.ToString();
+    }
+}
+
+public class SmartMatrixExceptionCalculating : SmartMatrixException {
+    public SmartMatrixExceptionCalculating(string message)
        : base(message) { }
     public override string ToString() {
         return base.ToString();
