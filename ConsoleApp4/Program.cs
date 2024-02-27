@@ -170,9 +170,9 @@ public class TextFileContent
         void InitDictionary()
         {
             TextFileSearcher newSearcher = new TextFileSearcher(fileDirectory);
-            curDictionary = newSearcher.SearchFiles(curKeywords.Values.ToArray());
-            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.ElementIndexCategory);
-            this.countElements = AtElment.Value.Count;
+            curDictinary = newSearcher.SearchFiles(curKeywords.Values.ToArray());
+            KeyValuePair<int, List<string>> AtElment = curDictinary.ElementAt(this.ElementIndexCategory);
+            this.CountElements = AtElment.Value.Count;
         }
         public DocumentManager()
         {
@@ -200,9 +200,8 @@ public class TextFileContent
         {
             Console.Clear();
             Console.WriteLine("Текущая дирректория: {0}", fileDirectory);
-            int keyCategoryHashCode = curDictionary.ElementAt(ElementIndexCategory).Key;
-            if (keyCategoryHashCode != 0)
-            {
+            int keyCategoryHashCode = curDictinary.ElementAt(ElementIndexCategory).Key;
+            if (keyCategoryHashCode != 0) {
                 Console.WriteLine("Текущая категория: {0}", curKeywords[keyCategoryHashCode]);
             }
             else
@@ -211,22 +210,20 @@ public class TextFileContent
                 Console.WriteLine("Текущая категория: безключевые");
 
             }
-            int currArrayIndex = 0;
-            while (currArrayIndex != currElementIndex)
-            {
-                Console.WriteLine(curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(ElementIndexCategory).Key, currArrayIndex++));
+            int CurrArrayIndex = 0;
+            while (CurrArrayIndex != CurrElementIndex) {
+                Console.WriteLine(curDictinary.GetElementByKeyAndIndex(curDictinary.ElementAt(ElementIndexCategory).Key, CurrArrayIndex++));
             }
-            Console.WriteLine($"{curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(ElementIndexCategory).Key, currArrayIndex++)}<----");
-            while (currArrayIndex != countElements)
-            {
-                Console.WriteLine(curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(ElementIndexCategory).Key, currArrayIndex++));
+            Console.WriteLine($"{curDictinary.GetElementByKeyAndIndex(curDictinary.ElementAt(ElementIndexCategory).Key, CurrArrayIndex++)}<----");
+            while (CurrArrayIndex != CountElements) {
+                Console.WriteLine(curDictinary.GetElementByKeyAndIndex(curDictinary.ElementAt(ElementIndexCategory).Key, CurrArrayIndex++));
             }
         }
         void DrawEditor()
         {
             System.Console.Clear();
             //Передаём управление в текстовый редактор
-            TextEditor newEditor = new TextEditor(curDictionary.ElementAt(ElementIndexCategory).Value[currElementIndex]);
+            TextEditor newEditor = new TextEditor(curDictinary.ElementAt(ElementIndexCategory).Value[CurrElementIndex]);
             newEditor.Edit();
         }
         void MoveUp()
@@ -243,15 +240,13 @@ public class TextFileContent
                 ++currElementIndex;
             }
         }
-        void MoveNextCategory()
-        {
-            currElementIndex = 0;
-            if (this.ElementIndexCategory + 1 < curDictionary.GetCount())
-            {
+        void MoveNextCategory() {
+            CurrElementIndex = 0;
+            if (this.ElementIndexCategory + 1 < curDictinary.GetCount()) {
                 this.ElementIndexCategory += 1;
             }
-            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.ElementIndexCategory);
-            this.countElements = AtElment.Value.Count;
+            KeyValuePair<int, List<string>> AtElment = curDictinary.ElementAt(this.ElementIndexCategory);
+            this.CountElements = AtElment.Value.Count;
         }
         void MovePreviousCategory()
         {
@@ -260,8 +255,8 @@ public class TextFileContent
             {
                 this.ElementIndexCategory -= 1;
             }
-            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.ElementIndexCategory);
-            this.countElements = AtElment.Value.Count;
+            KeyValuePair<int, List<string>> AtElment = curDictinary.ElementAt(this.ElementIndexCategory);
+            this.CountElements = AtElment.Value.Count;
         }
         public void ChooseDocument()
         {
@@ -311,9 +306,8 @@ public class TextFileContent
         {
             directoryPath = directoryPath;
         }
-        public SmartDictionary SearchFiles(string[] keywords)
-        {
-            SmartDictionary CurrSmartDictionary = new SmartDictionary();
+        public SmartDictinary SearchFiles(string[] keywords) {
+            SmartDictinary CurrSmartDictinary = new SmartDictinary();
             List<string> listKeyWord;
 
             if (!Directory.Exists(directoryPath))
@@ -326,24 +320,20 @@ public class TextFileContent
             {
                 Console.WriteLine(filePath);
                 listKeyWord = ContainsKeywords(filePath, keywords);
-                if (listKeyWord.Count > 0)
-                {
-                    foreach (string keyword in listKeyWord)
-                    {
-                        CurrSmartDictionary.Add(keyword.GetHashCode(), filePath);
+                if (listKeyWord.Count > 0) {
+                    foreach (string keyword in listKeyWord) {
+                        CurrSmartDictinary.Add(keyword.GetHashCode(), filePath);
                     }
                 }
-                else
-                {
-                    CurrSmartDictionary.Add(0, filePath);
+                else {
+                    CurrSmartDictinary.Add(0, filePath);
                 }
             }
             return CurrSmartDictionary;
         }
 
 
-        public class SmartDictionary
-        {
+        public class SmartDictinary {
             private Dictionary<int, List<string>> keyValuePairs = new Dictionary<int, List<string>>();
             public void Add(int key, string value)
             {
