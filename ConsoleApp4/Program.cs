@@ -13,45 +13,48 @@ using System.Diagnostics;
 #pragma warning disable SYSLIB0011
 
 [Serializable]
-public class TextFileContent {
+public class TextFileContent
+{
     public string fileName { get; set; }
     public string fileContent { get; set; }
 
     // Бинарная сериализация
-    public void SerializeBinary(string filePath) {
-        using (FileStream CurrentFileStream = new FileStream(filePath, FileMode.Create)) {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            binaryFormatter.Serialize(CurrentFileStream, this);
-        }
+    public void SerializeBinary(string filePath)
+    {
+        using FileStream currentFileStream = new FileStream(filePath, FileMode.Create);
+        BinaryFormatter binaryFormatter = new BinaryFormatter();
+        binaryFormatter.Serialize(currentFileStream, this);
     }
 
     // Бинарная десериализация
-    public void DeserializeBinary(string filePath) {
-        using (FileStream fs = new FileStream(filePath, FileMode.Open)) {
-            var binaryFormatter = new BinaryFormatter();
-            TextFileContent newContent = (TextFileContent)binaryFormatter.Deserialize(fs);
-            this.fileContent = newContent.fileContent;
-        }
+    public void DeserializeBinary(string filePath)
+    {
+        using FileStream currentFileStream = new FileStream(filePath, FileMode.Open);
+        var binaryFormatter = new BinaryFormatter();
+        TextFileContent newContent = (TextFileContent)binaryFormatter.Deserialize(currentFileStream);
+        this.fileContent = newContent.fileContent;
     }
 
     // XML сериализация
-    public void SerializeXml(string filePath) {
+    public void SerializeXml(string filePath)
+    {
         XmlSerializer serializer = new XmlSerializer(typeof(TextFileContent));
-        using (StreamWriter writer = new StreamWriter(filePath)) {
-            serializer.Serialize(writer, this);
-        }
+        using StreamWriter writer = new StreamWriter(filePath);
+        serializer.Serialize(writer, this);
     }
     // XML десериализация
-    public void DeserializeXml(string filePath) {
+    public void DeserializeXml(string filePath)
+    {
         XmlSerializer serializer = new XmlSerializer(typeof(TextFileContent));
-        using (StreamReader reader = new StreamReader(filePath)) {
-            TextFileContent newContent = (TextFileContent)serializer.Deserialize(reader);
-            this.fileContent = newContent.fileContent;
-        }
+        using StreamReader reader = new StreamReader(filePath);
+        TextFileContent newContent = (TextFileContent)serializer.Deserialize(reader);
+        this.fileContent = newContent.fileContent;
     }
 
-    public class Application {
-        public static void Main(string[] args) {
+    public class Application
+    {
+        public static void Main(string[] args)
+        {
             //Тест_Кейс 1
             //TextFileContent fileContent = new TextFileContent();
             //fileContent.fileName = "1234.txt";
@@ -70,72 +73,93 @@ public class TextFileContent {
             return;
         }
     }
-    public class DocumentManager {
-        private int ElementMaxIndex {
-            get {
-                if (CountElements > 0) {
-                    return CountElements - 1;
+    public class DocumentManager
+    {
+        private int elementMaxIndex
+        {
+            get
+            {
+                if (countElements > 0)
+                {
+                    return countElements - 1;
                 }
                 return 0;
             }
         }
-        private int CurrElementIndex = 0, CountElements, ElementIndexCategory = 0;
+        private int currElementIndex = 0, countElements, ElementIndexCategory = 0;
         private static DocumentManager Instance;
         Dictionary<int, string> curKeywords = new Dictionary<int, string>();
         Dictionary<int, TextFile> listFiles = new Dictionary<int, TextFile>();
         private string fileDirectory;
-        TextFileSearcher.SmartDictinary curDictinary;
+        TextFileSearcher.SmartDictionary curDictionary;
 
-        void SetUpFileDirectory() {
+        void SetUpFileDirectory()
+        {
             Console.WriteLine("Введите файловую дирректорию для индексации");
-            while (true) {
+            while (true)
+            {
                 fileDirectory = System.Console.ReadLine();
-                if (fileDirectory != null && fileDirectory != "\r\n") {
-                    if (Directory.Exists(fileDirectory)) {
+                if (fileDirectory != null && fileDirectory != "\r\n")
+                {
+                    if (Directory.Exists(fileDirectory))
+                    {
                         return;
                     }
-                    else {
+                    else
+                    {
                         Console.WriteLine("Директория установлена. ");
                         break;
                     }
                 }
-                else {
+                else
+                {
                     Console.WriteLine("Повторите ввод");
                 }
             }
         }
 
-        void SetUpKewWords(string[] listKeyWords) {
-            if (listKeyWords is null) {
+        void SetUpKewWords(string[] listKeyWords)
+        {
+            if (listKeyWords is null)
+            {
                 string inputKeyWord;
                 int inputHashCode;
-                while (true) {
+                while (true)
+                {
                     Console.WriteLine("Введите ключевое слово");
-                    while (true) {
+                    while (true)
+                    {
                         inputKeyWord = System.Console.ReadLine();
-                        if (inputKeyWord != null && inputKeyWord != "\r\n") {
+                        if (inputKeyWord != null && inputKeyWord != "\r\n")
+                        {
                             break;
                         }
-                        else {
+                        else
+                        {
                             Console.WriteLine("Повторите ввод");
                         }
                     }
                     inputHashCode = inputKeyWord.GetHashCode();
-                    if (curKeywords.ContainsKey(inputHashCode) == false) {
+                    if (curKeywords.ContainsKey(inputHashCode) == false)
+                    {
                         curKeywords.Add(inputHashCode, inputKeyWord);
                     }
                     Console.WriteLine("Продолжить? Enter - продолжить");
                     ConsoleKeyInfo key = Console.ReadKey(true);
-                    if (key.Key != ConsoleKey.Enter) {
+                    if (key.Key != ConsoleKey.Enter)
+                    {
                         break;
                     }
                 }
             }
-            else {
+            else
+            {
                 int inputHashCode;
-                for (int indexKeyWord = 0; indexKeyWord < listKeyWords.Length; indexKeyWord++) {
+                for (int indexKeyWord = 0; indexKeyWord < listKeyWords.Length; indexKeyWord++)
+                {
                     inputHashCode = listKeyWords[indexKeyWord].GetHashCode();
-                    if (curKeywords.ContainsKey(inputHashCode) == false) {
+                    if (curKeywords.ContainsKey(inputHashCode) == false)
+                    {
                         curKeywords.Add(inputHashCode, listKeyWords[indexKeyWord]);
                     }
                     ++indexKeyWord;
@@ -143,87 +167,109 @@ public class TextFileContent {
             }
         }
 
-        void InitDictinary() {
+        void InitDictionary()
+        {
             TextFileSearcher newSearcher = new TextFileSearcher(fileDirectory);
-            curDictinary = newSearcher.SearchFiles(curKeywords.Values.ToArray());
-            KeyValuePair<int, List<string>> AtElment = curDictinary.ElementAt(this.ElementIndexCategory);
-            this.CountElements = AtElment.Value.Count;
+            curDictionary = newSearcher.SearchFiles(curKeywords.Values.ToArray());
+            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.ElementIndexCategory);
+            this.countElements = AtElment.Value.Count;
         }
-        public DocumentManager() {
+        public DocumentManager()
+        {
             SetUpFileDirectory();
             SetUpKewWords(null);
-            InitDictinary();
+            InitDictionary();
         }
 
-        public DocumentManager(string fileDirectory, string[] keyWords) {
+        public DocumentManager(string fileDirectory, string[] keyWords)
+        {
             this.fileDirectory = fileDirectory;
             SetUpKewWords(keyWords);
-            InitDictinary();
+            InitDictionary();
         }
-        public static DocumentManager GetInstance() {
-            if (Instance == null) {
+        public static DocumentManager GetInstance()
+        {
+            if (Instance == null)
+            {
                 Instance = new DocumentManager();
             }
             return Instance;
         }
 
-        void DrawDirectory() {
+        void DrawDirectory()
+        {
             Console.Clear();
             Console.WriteLine("Текущая дирректория: {0}", fileDirectory);
-            int keyCategoryHashCode = curDictinary.ElementAt(ElementIndexCategory).Key;
-            if (keyCategoryHashCode != 0) {
+            int keyCategoryHashCode = curDictionary.ElementAt(ElementIndexCategory).Key;
+            if (keyCategoryHashCode != 0)
+            {
                 Console.WriteLine("Текущая категория: {0}", curKeywords[keyCategoryHashCode]);
             }
-            else {
+            else
+            {
                 //Нерассортированные элементы
                 Console.WriteLine("Текущая категория: безключевые");
 
             }
-            int CurrArrayIndex = 0;
-            while (CurrArrayIndex != CurrElementIndex) {
-                Console.WriteLine(curDictinary.GetElementByKeyAndIndex(curDictinary.ElementAt(ElementIndexCategory).Key, CurrArrayIndex++));
+            int currArrayIndex = 0;
+            while (currArrayIndex != currElementIndex)
+            {
+                Console.WriteLine(curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(ElementIndexCategory).Key, currArrayIndex++));
             }
-            Console.WriteLine($"{curDictinary.GetElementByKeyAndIndex(curDictinary.ElementAt(ElementIndexCategory).Key, CurrArrayIndex++)}<----");
-            while (CurrArrayIndex != CountElements) {
-                Console.WriteLine(curDictinary.GetElementByKeyAndIndex(curDictinary.ElementAt(ElementIndexCategory).Key, CurrArrayIndex++));
+            Console.WriteLine($"{curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(ElementIndexCategory).Key, currArrayIndex++)}<----");
+            while (currArrayIndex != countElements)
+            {
+                Console.WriteLine(curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(ElementIndexCategory).Key, currArrayIndex++));
             }
         }
-        void DrawEditor() {
+        void DrawEditor()
+        {
             System.Console.Clear();
             //Передаём управление в текстовый редактор
-            TextEditor newEditor = new TextEditor(curDictinary.ElementAt(ElementIndexCategory).Value[CurrElementIndex]);
+            TextEditor newEditor = new TextEditor(curDictionary.ElementAt(ElementIndexCategory).Value[currElementIndex]);
             newEditor.Edit();
         }
-        void MoveUp() {
-            if (CurrElementIndex != 0) {
-                --CurrElementIndex;
+        void MoveUp()
+        {
+            if (currElementIndex != 0)
+            {
+                --currElementIndex;
             }
         }
-        void MoveDouwn() {
-            if (CurrElementIndex != ElementMaxIndex) {
-                ++CurrElementIndex;
+        void MoveDouwn()
+        {
+            if (currElementIndex != elementMaxIndex)
+            {
+                ++currElementIndex;
             }
         }
-        void MoveNextCategory() {
-            CurrElementIndex = 0;
-            if (this.ElementIndexCategory + 1 < curDictinary.GetCount()) {
+        void MoveNextCategory()
+        {
+            currElementIndex = 0;
+            if (this.ElementIndexCategory + 1 < curDictionary.GetCount())
+            {
                 this.ElementIndexCategory += 1;
             }
-            KeyValuePair<int, List<string>> AtElment = curDictinary.ElementAt(this.ElementIndexCategory);
-            this.CountElements = AtElment.Value.Count;
+            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.ElementIndexCategory);
+            this.countElements = AtElment.Value.Count;
         }
-        void MovePreviousCategory() {
-            CurrElementIndex = 0;
-            if (this.ElementIndexCategory - 1 >= 0) {
+        void MovePreviousCategory()
+        {
+            currElementIndex = 0;
+            if (this.ElementIndexCategory - 1 >= 0)
+            {
                 this.ElementIndexCategory -= 1;
             }
-            KeyValuePair<int, List<string>> AtElment = curDictinary.ElementAt(this.ElementIndexCategory);
-            this.CountElements = AtElment.Value.Count;
+            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.ElementIndexCategory);
+            this.countElements = AtElment.Value.Count;
         }
-        public void ChooseDocument() {
-            while (true) {
+        public void ChooseDocument()
+        {
+            while (true)
+            {
                 DrawDirectory();
-                switch (Console.ReadKey().Key) {
+                switch (Console.ReadKey().Key)
+                {
                     case ConsoleKey.W:
                     case ConsoleKey.UpArrow:
                         MoveUp();
@@ -257,92 +303,120 @@ public class TextFileContent {
     }
 
 
-    public class TextFileSearcher {
-        public string DirectoryPath { get; }
+    public class TextFileSearcher
+    {
+        public string directoryPath { get; }
 
-        public TextFileSearcher(string directoryPath) {
-            DirectoryPath = directoryPath;
+        public TextFileSearcher(string directoryPath)
+        {
+            directoryPath = directoryPath;
         }
-        public SmartDictinary SearchFiles(string[] keywords) {
-            SmartDictinary CurrSmartDictinary = new SmartDictinary();
+        public SmartDictionary SearchFiles(string[] keywords)
+        {
+            SmartDictionary CurrSmartDictionary = new SmartDictionary();
             List<string> listKeyWord;
 
-            if (!Directory.Exists(DirectoryPath)) {
+            if (!Directory.Exists(directoryPath))
+            {
                 Console.WriteLine("Директория не найдена. ");
-                return CurrSmartDictinary;
+                return CurrSmartDictionary;
             }
 
-            foreach (string filePath in Directory.GetFiles(DirectoryPath, "*.txt", SearchOption.AllDirectories)) {
+            foreach (string filePath in Directory.GetFiles(directoryPath, "*.txt", SearchOption.AllDirectories))
+            {
                 Console.WriteLine(filePath);
                 listKeyWord = ContainsKeywords(filePath, keywords);
-                if (listKeyWord.Count > 0) {
-                    foreach (string keyword in listKeyWord) {
-                        CurrSmartDictinary.Add(keyword.GetHashCode(), filePath);
+                if (listKeyWord.Count > 0)
+                {
+                    foreach (string keyword in listKeyWord)
+                    {
+                        CurrSmartDictionary.Add(keyword.GetHashCode(), filePath);
                     }
                 }
-                else {
-                    CurrSmartDictinary.Add(0, filePath);
+                else
+                {
+                    CurrSmartDictionary.Add(0, filePath);
                 }
             }
-            return CurrSmartDictinary;
+            return CurrSmartDictionary;
         }
 
 
-        public class SmartDictinary {
+        public class SmartDictionary
+        {
             private Dictionary<int, List<string>> keyValuePairs = new Dictionary<int, List<string>>();
-            public void Add(int key, string value) {
-                if (keyValuePairs.ContainsKey(key)) {
+            public void Add(int key, string value)
+            {
+                if (keyValuePairs.ContainsKey(key))
+                {
                     keyValuePairs[key].Add(value);
                 }
-                else {
+                else
+                {
                     keyValuePairs.Add(key, new List<string>() { value });
                 }
             }
-            public void Remove(int key, string value) {
-                if (keyValuePairs.ContainsKey(key)) {
-                    if (keyValuePairs[key].Contains(value)) {
+            public void Remove(int key, string value)
+            {
+                if (keyValuePairs.ContainsKey(key))
+                {
+                    if (keyValuePairs[key].Contains(value))
+                    {
                         keyValuePairs[key].Remove(value);
                     }
                 }
             }
-            public List<string> GetListByKey(int key) {
-                if (keyValuePairs.ContainsKey(key)) {
+            public List<string> GetListByKey(int key)
+            {
+                if (keyValuePairs.ContainsKey(key))
+                {
                     return keyValuePairs[key];
                 }
-                else {
+                else
+                {
                     return new List<string>();
                 }
             }
 
-            public string GetElementByKeyAndIndex(int key, int index) {
-                if (keyValuePairs.ContainsKey(key)) {
+            public string GetElementByKeyAndIndex(int key, int index)
+            {
+                if (keyValuePairs.ContainsKey(key))
+                {
                     return keyValuePairs[key][index];
                 }
-                else {
+                else
+                {
                     return "";
                 }
             }
 
-            public int GetCountByKey(int key) {
-                if (keyValuePairs.ContainsKey(key)) {
+            public int GetCountByKey(int key)
+            {
+                if (keyValuePairs.ContainsKey(key))
+                {
                     return keyValuePairs[key].Count;
                 }
                 return 0;
             }
-            public int GetCount() {
+            public int GetCount()
+            {
                 return keyValuePairs.Count;
             }
-            public KeyValuePair<int, List<string>> ElementAt(int element) {
+            public KeyValuePair<int, List<string>> ElementAt(int element)
+            {
                 return keyValuePairs.ElementAt(element);
             }
         }
 
-        private List<string> ContainsKeywords(string filePath, string[] keywords) {
+        private List<string> ContainsKeywords(string filePath, string[] keywords)
+        {
             List<string> fileKeyWords = new List<string>();
             string fileContent = File.ReadAllText(filePath);
-            foreach (string keyword in keywords) {
+            foreach (string keyword in keywords)
+            {
                 //Сравниваем по бинарному поиску без учёта регистра.
-                if (fileContent.Contains(keyword, StringComparison.OrdinalIgnoreCase)) {
+                if (fileContent.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                {
                     fileKeyWords.Add(keyword);
                 }
             }
@@ -352,123 +426,154 @@ public class TextFileContent {
     }
 
 
-    public class TextFile {
+    public class TextFile
+    {
         TextFileContent fileContentInstance = new TextFileContent();
         TextFileMemento backupContent;
-        string fileName {
-            get {
+        string fileName
+        {
+            get
+            {
                 return fileContentInstance.fileName;
             }
-            set {
+            set
+            {
                 fileContentInstance.fileName = value;
             }
         }
-        string fileContent {
-            get {
+        string fileContent
+        {
+            get
+            {
                 return fileContentInstance.fileContent;
             }
-            set {
+            set
+            {
                 fileContentInstance.fileContent = value;
             }
         }
 
 
-        public TextFile(string fileName) {
+        public TextFile(string fileName)
+        {
             this.fileName = fileName;
             Load();
             backupContent = new TextFileMemento(this.fileContent);
         }
 
-        public void SerializeBinary(string fileName) {
+        public void SerializeBinary(string fileName)
+        {
             this.fileContentInstance.SerializeBinary(fileName);
         }
-        public void DeserializeBinary(string fileName) {
+        public void DeserializeBinary(string fileName)
+        {
             this.fileContentInstance.DeserializeBinary(fileName);
         }
-        public void SerializeXml(string fileName) {
+        public void SerializeXml(string fileName)
+        {
             this.fileContentInstance.SerializeXml(fileName);
         }
-        public void DeserializeXml(string fileName) {
+        public void DeserializeXml(string fileName)
+        {
             this.fileContentInstance.DeserializeXml(fileName);
         }
 
-        public void Load() {
+        public void Load()
+        {
             this.fileContent = File.ReadAllText(this.fileName);
         }
 
-        public void Save() {
+        public void Save()
+        {
             File.WriteAllText(fileName, fileContent);
         }
 
-        public void Undo() {
+        public void Undo()
+        {
             fileContent = backupContent.GetState();
         }
 
-        public void SetContent(string newContent) {
+        public void SetContent(string newContent)
+        {
             fileContent = newContent;
         }
 
-        public string GetContent() {
+        public string GetContent()
+        {
             return fileContent;
         }
 
-        public TextFileMemento CreateMemento() {
+        public TextFileMemento CreateMemento()
+        {
             return new TextFileMemento(fileContent);
         }
 
-        public void RestoreMemento(TextFileMemento memento) {
+        public void RestoreMemento(TextFileMemento memento)
+        {
             fileContent = memento.GetState();
         }
-        public string GetFileName() {
+        public string GetFileName()
+        {
             return this.fileName;
         }
-        public string GetTitle() {
+        public string GetTitle()
+        {
             string fileTitle = Path.GetFileName(this.fileName);
             return fileTitle;
         }
     }
 
 
-    public class TextFileMemento {
+    public class TextFileMemento
+    {
         private string state;
 
-        public TextFileMemento(string state) {
+        public TextFileMemento(string state)
+        {
             this.state = state;
         }
 
-        public string GetState() {
+        public string GetState()
+        {
             return state;
         }
     }
 
 
-    public class TextEditor {
+    public class TextEditor
+    {
         private TextFile textFile;
 
-        public TextEditor(string filePath) {
+        public TextEditor(string filePath)
+        {
             textFile = new TextFile(filePath);
         }
-        void SerializeBinary() {
+        void SerializeBinary()
+        {
             Console.WriteLine("Введите имя для нового файа, который будет бинарно серелизован");
             string inputFile = Console.ReadLine();
             textFile.SerializeBinary(inputFile);
         }
-        void DeserializeBinary() {
+        void DeserializeBinary()
+        {
             Console.WriteLine("Введите имя файа, контент которого будет бинарно десерелизован");
             string inputFile = Console.ReadLine();
             textFile.DeserializeBinary(inputFile);
         }
-        void SerializeXML() {
+        void SerializeXML()
+        {
             Console.WriteLine("Введите имя для нового файа, который будет XML серелизован");
             string inputFile = Console.ReadLine();
             textFile.SerializeXml(inputFile);
         }
-        void DeserializeXML() {
+        void DeserializeXML()
+        {
             Console.WriteLine("Введите имя файа, контент которого будет XML десерелизован");
             string inputFile = Console.ReadLine();
             textFile.DeserializeXml(inputFile);
         }
-        public void Serilization() {
+        public void Serilization()
+        {
             string startMessage = "Команды серелизатора:\n" +
             "1. Бинарно серилизовать\n" +
             "2. Бинарно десерилизовать\n" +
@@ -476,11 +581,13 @@ public class TextFileContent {
             "4. XML десерелизовать\n" +
             "5. Закрыть серелизатор\n" +
             "Введите номер команды: ";
-            while (true) {
+            while (true)
+            {
                 Console.Clear();
                 Console.Write(startMessage);
                 int choice = int.Parse(Console.ReadLine());
-                switch (choice) {
+                switch (choice)
+                {
                     case 1:
                         SerializeBinary();
                         break;
@@ -498,7 +605,8 @@ public class TextFileContent {
                 }
             }
         }
-        public void Edit() {
+        public void Edit()
+        {
             string startMessage =
             "Текстовый команды редактора:\n" +
             "1. Перезаписать контент\n" +
@@ -507,7 +615,8 @@ public class TextFileContent {
             "4. Закрыть редактор\n" +
             "5. Открыть в системном редакторе\n" +
             "6. Интерфэйс серилизации\\десерилизации\n";
-            while (true) {
+            while (true)
+            {
                 Console.Clear();
                 Console.WriteLine("Файл: {0}", textFile.GetTitle());
                 Console.WriteLine("Конетент: ");
@@ -518,7 +627,8 @@ public class TextFileContent {
 
                 int choice = int.Parse(Console.ReadLine());
 
-                switch (choice) {
+                switch (choice)
+                {
                     case 1:
                         Console.Write("Введите новый контент: ");
                         string newContent = Console.ReadLine();
@@ -534,7 +644,8 @@ public class TextFileContent {
                         break;
                     case 4:
                         return;
-                    case 5: {
+                    case 5:
+                        {
                             Process process = new Process();
                             // Установка параметров запуска
                             process.StartInfo.FileName = "notepad.exe";
@@ -546,7 +657,8 @@ public class TextFileContent {
                             process.WaitForExit();
                         }
                         break;
-                    case 6: {
+                    case 6:
+                        {
                             this.Serilization();
                             break;
                         }
