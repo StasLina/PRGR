@@ -86,7 +86,7 @@ public class TextFileContent
                 return 0;
             }
         }
-        private int currElementIndex = 0, countElements, ElementIndexCategory = 0;
+        private int currElementIndex = 0, countElements, elementIndexCategory = 0;
         private static DocumentManager Instance;
         Dictionary<int, string> curKeywords = new Dictionary<int, string>();
         Dictionary<int, TextFile> listFiles = new Dictionary<int, TextFile>();
@@ -170,9 +170,9 @@ public class TextFileContent
         void InitDictionary()
         {
             TextFileSearcher newSearcher = new TextFileSearcher(fileDirectory);
-            curDictinary = newSearcher.SearchFiles(curKeywords.Values.ToArray());
-            KeyValuePair<int, List<string>> AtElment = curDictinary.ElementAt(this.ElementIndexCategory);
-            this.CountElements = AtElment.Value.Count;
+            curDictionary = newSearcher.SearchFiles(curKeywords.Values.ToArray());
+            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.elementIndexCategory);
+            this.countElements = AtElment.Value.Count;
         }
         public DocumentManager()
         {
@@ -200,7 +200,7 @@ public class TextFileContent
         {
             Console.Clear();
             Console.WriteLine("Текущая дирректория: {0}", fileDirectory);
-            int keyCategoryHashCode = curDictinary.ElementAt(ElementIndexCategory).Key;
+            int keyCategoryHashCode = curDictionary.ElementAt(elementIndexCategory).Key;
             if (keyCategoryHashCode != 0) {
                 Console.WriteLine("Текущая категория: {0}", curKeywords[keyCategoryHashCode]);
             }
@@ -210,20 +210,20 @@ public class TextFileContent
                 Console.WriteLine("Текущая категория: безключевые");
 
             }
-            int CurrArrayIndex = 0;
-            while (CurrArrayIndex != CurrElementIndex) {
-                Console.WriteLine(curDictinary.GetElementByKeyAndIndex(curDictinary.ElementAt(ElementIndexCategory).Key, CurrArrayIndex++));
+            int currArrayIndex = 0;
+            while (currArrayIndex != currElementIndex) {
+                Console.WriteLine(curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(elementIndexCategory).Key, currArrayIndex++));
             }
-            Console.WriteLine($"{curDictinary.GetElementByKeyAndIndex(curDictinary.ElementAt(ElementIndexCategory).Key, CurrArrayIndex++)}<----");
-            while (CurrArrayIndex != CountElements) {
-                Console.WriteLine(curDictinary.GetElementByKeyAndIndex(curDictinary.ElementAt(ElementIndexCategory).Key, CurrArrayIndex++));
+            Console.WriteLine($"{curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(elementIndexCategory).Key, currArrayIndex++)}<----");
+            while (currArrayIndex != countElements) {
+                Console.WriteLine(curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(elementIndexCategory).Key, currArrayIndex++));
             }
         }
         void DrawEditor()
         {
             System.Console.Clear();
             //Передаём управление в текстовый редактор
-            TextEditor newEditor = new TextEditor(curDictinary.ElementAt(ElementIndexCategory).Value[CurrElementIndex]);
+            TextEditor newEditor = new TextEditor(curDictionary.ElementAt(elementIndexCategory).Value[currElementIndex]);
             newEditor.Edit();
         }
         void MoveUp()
@@ -241,22 +241,22 @@ public class TextFileContent
             }
         }
         void MoveNextCategory() {
-            CurrElementIndex = 0;
-            if (this.ElementIndexCategory + 1 < curDictinary.GetCount()) {
-                this.ElementIndexCategory += 1;
+            currElementIndex = 0;
+            if (this.elementIndexCategory + 1 < curDictionary.GetCount()) {
+                this.elementIndexCategory += 1;
             }
-            KeyValuePair<int, List<string>> AtElment = curDictinary.ElementAt(this.ElementIndexCategory);
-            this.CountElements = AtElment.Value.Count;
+            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.elementIndexCategory);
+            this.countElements = AtElment.Value.Count;
         }
         void MovePreviousCategory()
         {
             currElementIndex = 0;
-            if (this.ElementIndexCategory - 1 >= 0)
+            if (this.elementIndexCategory - 1 >= 0)
             {
-                this.ElementIndexCategory -= 1;
+                this.elementIndexCategory -= 1;
             }
-            KeyValuePair<int, List<string>> AtElment = curDictinary.ElementAt(this.ElementIndexCategory);
-            this.CountElements = AtElment.Value.Count;
+            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.elementIndexCategory);
+            this.countElements = AtElment.Value.Count;
         }
         public void ChooseDocument()
         {
@@ -306,14 +306,14 @@ public class TextFileContent
         {
             directoryPath = directoryPath;
         }
-        public SmartDictinary SearchFiles(string[] keywords) {
-            SmartDictinary CurrSmartDictinary = new SmartDictinary();
+        public SmartDictionary SearchFiles(string[] keywords) {
+            SmartDictionary currSmartDictionary = new SmartDictionary();
             List<string> listKeyWord;
 
             if (!Directory.Exists(directoryPath))
             {
                 Console.WriteLine("Директория не найдена. ");
-                return CurrSmartDictionary;
+                return currSmartDictionary;
             }
 
             foreach (string filePath in Directory.GetFiles(directoryPath, "*.txt", SearchOption.AllDirectories))
@@ -322,18 +322,18 @@ public class TextFileContent
                 listKeyWord = ContainsKeywords(filePath, keywords);
                 if (listKeyWord.Count > 0) {
                     foreach (string keyword in listKeyWord) {
-                        CurrSmartDictinary.Add(keyword.GetHashCode(), filePath);
+                        currSmartDictionary.Add(keyword.GetHashCode(), filePath);
                     }
                 }
                 else {
-                    CurrSmartDictinary.Add(0, filePath);
+                    currSmartDictionary.Add(0, filePath);
                 }
             }
-            return CurrSmartDictionary;
+            return currSmartDictionary;
         }
 
 
-        public class SmartDictinary {
+        public class SmartDictionary {
             private Dictionary<int, List<string>> keyValuePairs = new Dictionary<int, List<string>>();
             public void Add(int key, string value)
             {
