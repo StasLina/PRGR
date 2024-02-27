@@ -171,8 +171,16 @@ public class TextFileContent
         {
             TextFileSearcher newSearcher = new TextFileSearcher(fileDirectory);
             curDictionary = newSearcher.SearchFiles(curKeywords.Values.ToArray());
-            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.elementIndexCategory);
-            this.countElements = AtElment.Value.Count;
+            if (curDictionary.GetCount() > 0)
+            {
+                KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.elementIndexCategory);
+                this.countElements = AtElment.Value.Count;
+            }
+            else
+            {
+                this.countElements = 0;
+            }
+            
         }
         public DocumentManager()
         {
@@ -211,11 +219,11 @@ public class TextFileContent
 
             }
             int currArrayIndex = 0;
-            while (currArrayIndex != currElementIndex) {
+            while (currArrayIndex < currElementIndex) {
                 Console.WriteLine(curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(elementIndexCategory).Key, currArrayIndex++));
             }
             Console.WriteLine($"{curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(elementIndexCategory).Key, currArrayIndex++)}<----");
-            while (currArrayIndex != countElements) {
+            while (currArrayIndex < countElements) {
                 Console.WriteLine(curDictionary.GetElementByKeyAndIndex(curDictionary.ElementAt(elementIndexCategory).Key, currArrayIndex++));
             }
         }
@@ -244,9 +252,9 @@ public class TextFileContent
             currElementIndex = 0;
             if (this.elementIndexCategory + 1 < curDictionary.GetCount()) {
                 this.elementIndexCategory += 1;
+                KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.elementIndexCategory);
+                this.countElements = AtElment.Value.Count;
             }
-            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.elementIndexCategory);
-            this.countElements = AtElment.Value.Count;
         }
         void MovePreviousCategory()
         {
@@ -254,9 +262,9 @@ public class TextFileContent
             if (this.elementIndexCategory - 1 >= 0)
             {
                 this.elementIndexCategory -= 1;
+                KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.elementIndexCategory);
+                this.countElements = AtElment.Value.Count;
             }
-            KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.elementIndexCategory);
-            this.countElements = AtElment.Value.Count;
         }
         public void ChooseDocument()
         {
@@ -394,7 +402,10 @@ public class TextFileContent
             }
             public KeyValuePair<int, List<string>> ElementAt(int element)
             {
-                return keyValuePairs.ElementAt(element);
+                if (element < keyValuePairs.Count) {
+                    return keyValuePairs.ElementAt(element);
+                }
+                return new KeyValuePair<int, List<string>>();
             }
         }
 
