@@ -41,7 +41,7 @@ public class TextFileContent {
         }
     }
     // XML десериализация
-    public void  DeserializeXml(string filePath) {
+    public void DeserializeXml(string filePath) {
         XmlSerializer serializer = new XmlSerializer(typeof(TextFileContent));
         using (StreamReader reader = new StreamReader(filePath)) {
             TextFileContent newContent = (TextFileContent)serializer.Deserialize(reader);
@@ -51,18 +51,20 @@ public class TextFileContent {
 
     public class Application {
         public static void Main(string[] args) {
-            TextFileContent fileContent= new TextFileContent();
-            fileContent.fileName = "1234.txt";
-            fileContent.fileContent = "Жук банак кртофель";
-            fileContent.SerializeXml("1234.xml");
-            fileContent.DeserializeXml("1234.xml");
-            //Получаем директорую
-            string[] keyWords = new string[] {
-                "Git",
-                "sql",
-                "обучен"
-            };
-            DocumentManager docManager = new DocumentManager("C:\\Users\\sthoz\\Downloads\\test_folder", keyWords);
+            //Тест_Кейс 1
+            //TextFileContent fileContent = new TextFileContent();
+            //fileContent.fileName = "1234.txt";
+            //fileContent.fileContent = "";
+            //fileContent.SerializeXml("1234.xml");
+            //fileContent.DeserializeXml("1234.xml");
+            ////Получаем директорую
+            //string[] keyWords = new string[] {
+            //    "Git",
+            //    "sql"
+            //};
+            //DocumentManager docManager = new DocumentManager("C:\\Users\\sthoz\\Downloads\\test_folder", keyWords);
+
+            DocumentManager docManager = new DocumentManager();
             docManager.ChooseDocument();
             return;
         }
@@ -77,8 +79,6 @@ public class TextFileContent {
             }
         }
         private int CurrElementIndex = 0, CountElements, ElementIndexCategory = 0;
-        //private List<Document> ListDocuments;
-
         private static DocumentManager Instance;
         Dictionary<int, string> curKeywords = new Dictionary<int, string>();
         Dictionary<int, TextFile> listFiles = new Dictionary<int, TextFile>();
@@ -91,7 +91,7 @@ public class TextFileContent {
                 fileDirectory = System.Console.ReadLine();
                 if (fileDirectory != null && fileDirectory != "\r\n") {
                     if (Directory.Exists(fileDirectory)) {
-                        Console.WriteLine("Директория не найдена. ");
+                        return;
                     }
                     else {
                         Console.WriteLine("Директория установлена. ");
@@ -106,15 +106,10 @@ public class TextFileContent {
 
         void SetUpKewWords(string[] listKeyWords) {
             if (listKeyWords is null) {
-                Console.WriteLine("Введите ключевое слово");
                 string inputKeyWord;
                 int inputHashCode;
                 while (true) {
-                    ConsoleKeyInfo key = Console.ReadKey();
-
-                    if (key.Key == ConsoleKey.Escape) {
-                        break;
-                    }
+                    Console.WriteLine("Введите ключевое слово");
                     while (true) {
                         inputKeyWord = System.Console.ReadLine();
                         if (inputKeyWord != null && inputKeyWord != "\r\n") {
@@ -127,6 +122,11 @@ public class TextFileContent {
                     inputHashCode = inputKeyWord.GetHashCode();
                     if (curKeywords.ContainsKey(inputHashCode) == false) {
                         curKeywords.Add(inputHashCode, inputKeyWord);
+                    }
+                    Console.WriteLine("Продолжить? Enter - продолжить");
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+                    if (key.Key != ConsoleKey.Enter) {
+                        break;
                     }
                 }
             }
@@ -152,14 +152,12 @@ public class TextFileContent {
             SetUpFileDirectory();
             SetUpKewWords(null);
             InitDictinary();
-            //DrawDirectory();
         }
 
         public DocumentManager(string fileDirectory, string[] keyWords) {
             this.fileDirectory = fileDirectory;
             SetUpKewWords(keyWords);
             InitDictinary();
-            //DrawDirectory();
         }
         public static DocumentManager GetInstance() {
             if (Instance == null) {
@@ -279,7 +277,6 @@ public class TextFileContent {
                 if (listKeyWord.Count > 0) {
                     foreach (string keyword in listKeyWord) {
                         CurrSmartDictinary.Add(keyword.GetHashCode(), filePath);
-                        
                     }
                 }
                 else {
@@ -288,6 +285,8 @@ public class TextFileContent {
             }
             return CurrSmartDictinary;
         }
+
+
         public class SmartDictinary {
             private Dictionary<int, List<string>> keyValuePairs = new Dictionary<int, List<string>>();
             public void Add(int key, string value) {
@@ -337,7 +336,6 @@ public class TextFileContent {
             }
         }
 
-
         private List<string> ContainsKeywords(string filePath, string[] keywords) {
             List<string> fileKeyWords = new List<string>();
             string fileContent = File.ReadAllText(filePath);
@@ -352,7 +350,8 @@ public class TextFileContent {
 
     }
 
-    public class TextFile  {
+
+    public class TextFile {
         TextFileContent fileContentInstance = new TextFileContent();
         TextFileMemento backupContent;
         string fileName {
@@ -371,7 +370,8 @@ public class TextFileContent {
                 fileContentInstance.fileContent = value;
             }
         }
-        
+
+
         public TextFile(string fileName) {
             this.fileName = fileName;
             Load();
@@ -426,21 +426,22 @@ public class TextFileContent {
             return fileTitle;
         }
     }
-    
-    
-public class TextFileMemento {
-    private string state;
 
-    public TextFileMemento(string state) {
-        this.state = state;
+
+    public class TextFileMemento {
+        private string state;
+
+        public TextFileMemento(string state) {
+            this.state = state;
+        }
+
+        public string GetState() {
+            return state;
+        }
     }
 
-    public string GetState() {
-        return state;
-    }
-}
 
-public class TextEditor {
+    public class TextEditor {
         private TextFile textFile;
 
         public TextEditor(string filePath) {
@@ -467,12 +468,12 @@ public class TextEditor {
             textFile.DeserializeXml(inputFile);
         }
         public void Serilization() {
-            string startMessage ="Команды серелизатора:\n" +
+            string startMessage = "Команды серелизатора:\n" +
             "1. Бинарно серилизовать\n" +
             "2. Бинарно десерилизовать\n" +
             "3. XML серелизовать\n" +
             "4. XML десерелизовать\n" +
-            "5. Закрыть серелизатор\n"+
+            "5. Закрыть серелизатор\n" +
             "Введите номер команды: ";
             while (true) {
                 Console.Clear();
@@ -502,16 +503,16 @@ public class TextEditor {
             "1. Перезаписать контент\n" +
             "2. Сохранить\n" +
             "3. Отменить изменения\n" +
-            "4. Завершить работу\n" +
+            "4. Закрыть редактор\n" +
             "5. Открыть в системном редакторе\n" +
             "6. Интерфэйс серилизации\\десерилизации\n";
             while (true) {
                 Console.Clear();
-                Console.Write(startMessage);
                 Console.WriteLine("Файл: {0}", textFile.GetTitle());
                 Console.WriteLine("Конетент: ");
                 var fileContent = textFile.GetContent();
                 Console.WriteLine(fileContent);
+                Console.Write(startMessage);
                 Console.Write("Введите номер команды: ");
 
                 int choice = int.Parse(Console.ReadLine());
@@ -535,8 +536,8 @@ public class TextEditor {
                     case 5: {
                             Process process = new Process();
                             // Установка параметров запуска
-                            process.StartInfo.FileName = "notepad.exe"; 
-                            process.StartInfo.Arguments = textFile.GetFileName(); 
+                            process.StartInfo.FileName = "notepad.exe";
+                            process.StartInfo.Arguments = textFile.GetFileName();
                             // Запуск процесса
                             process.Start();
 
@@ -545,9 +546,9 @@ public class TextEditor {
                         }
                         break;
                     case 6: {
-                          this.Serilization();
+                            this.Serilization();
                             break;
-                    }
+                        }
                     default:
                         Console.WriteLine("Неправильный выбор, попытайтесь снова");
                         break;
