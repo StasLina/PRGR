@@ -1,4 +1,5 @@
-﻿using System;
+﻿//v1.2024_02_27_1
+using System;
 using System.IO;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
