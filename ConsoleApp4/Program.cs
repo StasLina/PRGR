@@ -1,4 +1,4 @@
-﻿//v1.2024_02_27_1
+﻿//v1.2024_02_27_2
 using System;
 using System.IO;
 using System.Xml.Serialization;
@@ -312,7 +312,7 @@ public class TextFileContent
 
         public TextFileSearcher(string directoryPath)
         {
-            directoryPath = directoryPath;
+            this.directoryPath = directoryPath;
         }
         public SmartDictionary SearchFiles(string[] keywords) {
             SmartDictionary currSmartDictionary = new SmartDictionary();
