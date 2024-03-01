@@ -106,7 +106,7 @@ public class TextFileContent
 
         void SetUpFileDirectory()
         {
-            Console.WriteLine("Введите файловую дирректорию для индексации");
+            Console.WriteLine("Введите файловую директорию для индексации");
             while (true)
             {
                 fileDirectory = System.Console.ReadLine();
@@ -155,7 +155,7 @@ public class TextFileContent
                     {
                         curKeywords.Add(inputHashCode, inputKeyWord);
                     }
-                    Console.WriteLine("Продолжить? Enter - продолжить");
+                    Console.WriteLine("Нажмите Enter, чтобы продолжить, или любую другую клавишу, чтобы закончить");
                     ConsoleKeyInfo key = Console.ReadKey(true);
                     if (key.Key != ConsoleKey.Enter)
                     {
@@ -209,7 +209,7 @@ public class TextFileContent
         void DrawDirectory()
         {
             Console.Clear();
-            Console.WriteLine("Текущая дирректория: {0}", fileDirectory);
+            Console.WriteLine("Текущая директория: {0}", fileDirectory);
             int keyCategoryHashCode = curDictionary.ElementAt(elementIndexCategory).Key;
             if (keyCategoryHashCode != 0) {
                 Console.WriteLine("Текущая категория: {0}", curKeywords[keyCategoryHashCode]);
@@ -516,21 +516,21 @@ public class TextFileContent
             CareTakerInstance.SaveState(this);
         }
 
-        public void SerializeBinary(string FileName)
+        public void SerializeBinary(string fileName)
         {
-            this.FileContentInstance.SerializeBinary(FileName);
+            this.FileContentInstance.SerializeBinary(fileName);
         }
-        public void DeserializeBinary(string FileName)
+        public void DeserializeBinary(string fileName)
         {
-            this.FileContentInstance.DeserializeBinary(FileName);
+            this.FileContentInstance.DeserializeBinary(fileName);
         }
-        public void SerializeXml(string FileName)
+        public void SerializeXml(string fileName)
         {
-            this.FileContentInstance.SerializeXml(FileName);
+            this.FileContentInstance.SerializeXml(fileName);
         }
-        public void DeserializeXml(string FileName)
+        public void DeserializeXml(string fileName)
         {
-            this.FileContentInstance.DeserializeXml(FileName);
+            this.FileContentInstance.DeserializeXml(fileName);
         }
 
         public void Load()
@@ -628,7 +628,7 @@ public class TextFileContent
             string inputFile = Console.ReadLine();
             textFile.DeserializeXml(inputFile);
         }
-        public void Serilization()
+        public void Serialize()
         {
             string startMessage = "Команды серелизатора:\n" +
             "1. Бинарно серилизовать\n" +
@@ -664,13 +664,13 @@ public class TextFileContent
         public void Edit()
         {
             string startMessage =
-            "Текстовый команды редактора:\n" +
+            "Текстовые команды редактора:\n" +
             "1. Перезаписать контент\n" +
             "2. Сохранить\n" +
             "3. Отменить изменения\n" +
             "4. Закрыть редактор\n" +
             "5. Открыть в системном редакторе\n" +
-            "6. Интерфэйс серилизации\\десерилизации\n";
+            "6. Интерфейс сериализации\\десереализации\n";
             while (true)
             {
                 Console.Clear();
@@ -715,7 +715,7 @@ public class TextFileContent
                         break;
                     case 6:
                         {
-                            this.Serilization();
+                            this.Serialize();
                             break;
                         }
                     default:
