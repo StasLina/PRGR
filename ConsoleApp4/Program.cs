@@ -4,6 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Diagnostics;
 #pragma warning disable SYSLIB0011
 
+
 [Serializable]
 public class TextFileContent
 {
@@ -11,7 +12,7 @@ public class TextFileContent
     public string FileContent { get; set; }
 
     // Бинарная сериализация
-    public void SerializeBinary(string filePath)
+    public void SerializeBinaryOld(string filePath)
     {
         using FileStream currentFileStream = new FileStream(filePath, FileMode.Create);
         BinaryFormatter binaryFormatter = new BinaryFormatter();
@@ -19,12 +20,33 @@ public class TextFileContent
     }
 
     // Бинарная десериализация
-    public void DeserializeBinary(string filePath)
+    public void DeserializeBinaryOld(string filePath)
     {
         using FileStream currentFileStream = new FileStream(filePath, FileMode.Open);
         var binaryFormatter = new BinaryFormatter();
         TextFileContent newContent = (TextFileContent)binaryFormatter.Deserialize(currentFileStream);
         this.FileContent = newContent.FileContent;
+    }
+
+    public void SerializeBinary(string filePath)
+    {
+        using FileStream currentFileStream = new FileStream(filePath, FileMode.Create);
+        using MemoryStream stream = new MemoryStream();
+        BinaryWriter writer = new BinaryWriter(stream);
+        writer.Write(FileName);
+        writer.Write(FileContent);
+        writer.Write(GetHashCode());
+        currentFileStream.Write(stream.ToArray());
+    }
+
+    public void DeserializeBinary(string filePath)
+    {
+        using MemoryStream currentMemoryStream = new MemoryStream(File.ReadAllBytes(filePath));
+        BinaryReader reader = new BinaryReader(currentMemoryStream);
+        string fileName = reader.ReadString();
+        string fileContent = reader.ReadString();
+        int hash = reader.ReadInt32();
+        this.FileContent = fileContent;
     }
 
     // XML сериализация
