@@ -485,9 +485,9 @@ public class TextFileContent
         }
 
 
-        public TextFile(string FileName)
+        public TextFile(string fileName)
         {
-            this.FileName = FileName;
+            this.FileName = fileName;
             Load();
             //Реализовать Instance
             var CareTakerInstance = CareTaker.Instance;
