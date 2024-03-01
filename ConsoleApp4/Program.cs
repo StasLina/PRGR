@@ -184,8 +184,8 @@ public class TextFileContent
             curDictionary = newSearcher.SearchFiles(curKeywords.Values.ToArray());
             if (curDictionary.GetCount() > 0)
             {
-                KeyValuePair<int, List<string>> AtElment = curDictionary.ElementAt(this.elementIndexCategory);
-                this.countElements = AtElment.Value.Count;
+                KeyValuePair<int, List<string>> atElment = curDictionary.ElementAt(this.elementIndexCategory);
+                this.countElements = atElment.Value.Count;
             }
             else
             {
@@ -312,9 +312,9 @@ public class TextFileContent
     {
         public string DirectoryPath { get; }
 
-        public TextFileSearcher(string DirectoryPath)
+        public TextFileSearcher(string directoryPath)
         {
-            this.DirectoryPath = DirectoryPath;
+            this.DirectoryPath = directoryPath;
         }
         public SmartDictionary SearchFiles(string[] keywords) {
             SmartDictionary currentSmartDictionary = new SmartDictionary();
@@ -414,11 +414,11 @@ public class TextFileContent
         private List<string> ContainsKeywords(string filePath, string[] keywords)
         {
             List<string> fileKeyWords = new List<string>();
-            string FileContent = File.ReadAllText(filePath);
+            string fileContent = File.ReadAllText(filePath);
             foreach (string keyword in keywords)
             {
                 //Сравниваем по бинарному поиску без учёта регистра.
-                if (FileContent.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                if (fileContent.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                 {
                     fileKeyWords.Add(keyword);
                 }
