@@ -421,7 +421,7 @@ public class TextFileContent
             }
         }
 
-        public void SaveState(AbstractTextFile originator)
+        public void SaveState(IOriginator originator)
         {
             int hashCodeOriginator = originator.GetHashCode();
             if (AssClassMemento.ContainsKey(hashCodeOriginator))
@@ -433,7 +433,7 @@ public class TextFileContent
                 AssClassMemento.Add(hashCodeOriginator, originator.GetMemento());
             }
         }
-        public object GetMemento(AbstractTextFile originator)
+        public object GetMemento(IOriginator originator)
         {
             int hashCodeOriginator = originator.GetHashCode();
             if (AssClassMemento.ContainsKey(hashCodeOriginator))
@@ -442,7 +442,7 @@ public class TextFileContent
             }
             return null;
         }
-        public void RestoreState(AbstractTextFile originator)
+        public void RestoreState(IOriginator originator)
         {
             int hashCodeOriginator = originator.GetHashCode();
             if (AssClassMemento.ContainsKey(hashCodeOriginator))
@@ -451,13 +451,13 @@ public class TextFileContent
             }
         }
     }
-    public abstract class AbstractTextFile
+    public interface IOriginator
     {
-        abstract public object  GetMemento();
-
+        abstract public object GetMemento();
         abstract public void SetMeneto(object textFileMemento);
     }
-    public class TextFile : AbstractTextFile
+
+    public class TextFile : IOriginator
     {
         TextFileContent FileContentInstance = new TextFileContent();
         //TextFileMemento backupContent;
@@ -526,12 +526,12 @@ public class TextFileContent
             CareTaker.Instance.RestoreState(this);
         }
         
-        override public TextFileMemento GetMemento()
+        object IOriginator.GetMemento()
         {
             return new TextFileMemento(FileContentInstance.FileContent);
         }
 
-        override public void SetMeneto(object textFileMemento)
+        void IOriginator.SetMeneto(object textFileMemento)
         {
             FileContent = (textFileMemento as TextFileMemento).GetState();
         }
