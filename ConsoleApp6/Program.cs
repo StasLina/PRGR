@@ -1,30 +1,30 @@
 ﻿using System.Text.RegularExpressions;
 
-class ErroneousWordsDictionary : System.Collections.Generic.Dictionary<string, string>
+class WarningWordsDictionary : System.Collections.Generic.Dictionary<string, string>
 {
-    public ErroneousWordsDictionary() : base()
+    public WarningWordsDictionary() : base()
     {
     }
     public new void Add(string trueWord, string falseWord)
     {
-        if(base.ContainsKey(falseWord)==false) 
+        if (base.ContainsKey(falseWord) == false)
             base.Add(falseWord, trueWord);
     }
 }
 class Apllication
 {
-    static ErroneousWordsDictionary ErroneousWordsDictionary = new ErroneousWordsDictionary();
+    static WarningWordsDictionary WarningWordsDictionary = new WarningWordsDictionary();
 
     public static void Main(string[] args)
     {
         // Словарь ошибочных слов
-        ErroneousWordsDictionary.Add("привет", "првиет");
-        ErroneousWordsDictionary.Add("привет", "првиет");
-        ErroneousWordsDictionary.Add("привет", "правиет");
-        ErroneousWordsDictionary.Add("связаться", "сзвяться");
+        WarningWordsDictionary.Add("привет", "првиет");
+        WarningWordsDictionary.Add("привет", "првиет");
+        WarningWordsDictionary.Add("привет", "правиет");
+        WarningWordsDictionary.Add("связаться", "сзвяться");
 
         ConsoleInterface.Get.Run();
-        Console.WriteLine("Приятно помочь, досвидание.");
+        Console.WriteLine("Приятно помочь, до свидания.");
     }
     class ConsoleInterface
     {
@@ -33,7 +33,7 @@ class Apllication
         {
             get
             {
-                if(instance == null)
+                if (instance == null)
                 {
                     instance = new ConsoleInterface();
                 }
@@ -48,12 +48,12 @@ class Apllication
                 {
                     // Директория, содержащая текстовые файлы
                     //string directoryPath = "C:\\Users\\sthoz\\source\\repos\\C#\\ConsoleApp6\\ConsoleApp6";
-                    Console.Write("Введите путь до дирректории: ");
+                    Console.Write("Введите путь до директории: ");
                     string directoryPath = Console.ReadLine();
                     // Проходим по всем файлам в указанной директории
                     foreach (string filePath in Directory.GetFiles(directoryPath, "*.txt"))
                     {
-                        FixErrorsInFile(filePath, ErroneousWordsDictionary);
+                        FixErrorsInFile(filePath, WarningWordsDictionary);
                     }
                     Console.WriteLine("Нажмите enter для завершения.");
                     ConsoleKey pressedKey = Console.ReadKey(false).Key;
@@ -63,16 +63,15 @@ class Apllication
                     }
                     Console.Clear();
                 }
-                catch {
+                catch
+                {
                     Console.WriteLine("Что-то страшное, попробуйте снова");
                 }
             }
-
         }
-
     }
 
-    static void FixErrorsInFile(string filePath, ErroneousWordsDictionary erroneousWords)
+    static void FixErrorsInFile(string filePath, WarningWordsDictionary erroneousWords)
     {
         try
         {
@@ -83,7 +82,7 @@ class Apllication
             foreach (var pair in erroneousWords)
             {
                 newText = text.Replace(pair.Key, pair.Value);
-                if(isFileReplaces==false && newText != text)
+                if (isFileReplaces == false && newText != text)
                 {
                     isFileReplaces = true;
                 }
