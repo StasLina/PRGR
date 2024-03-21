@@ -1099,7 +1099,6 @@ public static class MatrixExtensions
             }
         }
     };
-
 }
 
 public class CalculationHandler
