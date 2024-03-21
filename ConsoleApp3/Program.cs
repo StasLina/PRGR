@@ -50,8 +50,13 @@ public class MatrixData : List<MatrixRow>
     }
 }
 
-
 class Application {
+    static CalculationHandler handler1 = new CalculationHandler("handler1",20000);
+    static CalculationHandler handler2 = new CalculationHandler("handler2", 5000);
+    static CalculationHandler handler3 = new CalculationHandler("handler3", 15000);
+    static CalculationHandler handler4 = new CalculationHandler("handler4", 40000);
+    static CalculationHandler superHandler = new CalculationHandler("superHandler", 0);
+
     public static SmartMatrix Matr1, Matr2;
     public static void CreateMatrix(out SmartMatrix matr1)
     {
@@ -360,9 +365,153 @@ class Application {
     }
 }
 
+    public static void PrintTransposeMatrix()
+    {
+        if (Matr1 is null)
+        {
+            Console.WriteLine("Матрица1 не создана");
+        }
+        else
+        {
+            Matrix val = (Matrix)Matr1;
+            Matr1.Transpose();
+            Console.WriteLine(Matr1);
+        }
+    }
+    public static void PrintTraceMatrix()
+    {
+        if (Matr1 is null)
+        {
+            Console.WriteLine("Матрица1 не создана");
+        }
+        else
+        {
+            Console.Write("След матрицы1: ");
+            Console.WriteLine(Matr1.Trace());
+            Console.WriteLine(Matr1.ToString());
+        }
+    }
+    public static void ExtensionChoose()
+    {
+        Console.WriteLine("1 - Перевернутая матрица 1");
+        Console.WriteLine("2 - След матрицы 1");
+
+        ConsoleKey pressedKey = Console.ReadKey().Key;
+        Console.WriteLine();
+        switch (pressedKey)
+        {
+            case ConsoleKey.D1:
+                handler1.HandleRequest(CalculationHandler.TypeHhandleEvents.TransposeMatrix);
+                break;
+            case ConsoleKey.D2:
+                handler1.HandleRequest(CalculationHandler.TypeHhandleEvents.TraceMatrix);
+                break;
+
+        }
+    }
+    static void EventCreateMatix1()
+    {
+        CreateMatrix(out Matr1);
+    }
+    static void EventCreateMatix2()
+    {
+        CreateMatrix(out Matr2);
+    }
+    static void EventFillRandomMatrix()
+    {
+        FillRandomMatrix();
+    }
+    static void EventChooseFillMatrix()
+    {
+        ChooseFillMatrix();
+    }
+    static void EventPrintMatrix()
+    {
+        PrintMatrix();
+    }
+    static void EventPrintInverseMatrix()
+    {
+        PrintInverseMatrix();
+    }
+    static void EventGetHashCode()
+    {
+        GetHashCode();
+    }
+    static void EventChooseCompareMatrix()
+    {
+        ChooseCompareMatrix();
+    }
+    static void EventTransposeMatrix()
+    {
+        PrintTransposeMatrix();
+    }
+    static void EventTraceMatrix()
+    {
+        PrintTraceMatrix();
+    }
+
     public static void Main(string[] args)
     {
-        string functionality = "Функциональность\r\n1) - Создание Основной матрицы\r\n2) - Создание Дополнительной матрицы\r\n3) - Заполнить случайными значениями\r\n4) - Заполнить ручками\r\n5) - Вывести матрицу\r\n6) - Вывести обратную матрицу\r\n7) - Получить хэш код\r\n8) - Сравнить матрицы";
+        //CalculationHandler.CalculationDelegate calculation = () => { EventCreateMatix1(); };
+        CalculationHandler.CalculationDelegate calculationCreateMatrix1 = EventCreateMatix1;
+        CalculationHandler.CalculationDelegate calculationCreateMatix2 = EventCreateMatix2;
+        CalculationHandler.CalculationDelegate calculationFillRandomMatrix = EventFillRandomMatrix;
+        CalculationHandler.CalculationDelegate calculationChooseFillMatrix = EventChooseFillMatrix;
+        CalculationHandler.CalculationDelegate calculationPrintMatrix = EventPrintMatrix;
+        CalculationHandler.CalculationDelegate calculationInverseMatrix = EventPrintInverseMatrix;
+        CalculationHandler.CalculationDelegate calculationGetHashCode = EventGetHashCode;
+        CalculationHandler.CalculationDelegate calculationChooseCompareMatrix = EventChooseCompareMatrix;
+        CalculationHandler.CalculationDelegate calculationTransposeMatrix = EventTransposeMatrix;
+        CalculationHandler.CalculationDelegate calculationTraceMatrix = EventTraceMatrix;
+
+        handler1.SetNextHandler(handler2);
+        handler2.SetNextHandler(handler3);
+        handler3.SetNextHandler(handler4);
+        handler4.SetNextHandler(superHandler);
+
+        superHandler.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationCreateMatrix1);
+        superHandler.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationCreateMatix2);
+        superHandler.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationFillRandomMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHhandleEvents.ChooseFillMatrix, calculationChooseFillMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHhandleEvents.PrintMatrix, calculationPrintMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHhandleEvents.PrintInverseMatrix, calculationInverseMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHhandleEvents.GetHashCode, calculationGetHashCode);
+        superHandler.AddDelegate(CalculationHandler.TypeHhandleEvents.ChooseCompareMatrix, calculationChooseCompareMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHhandleEvents.TransposeMatrix, calculationTransposeMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHhandleEvents.TraceMatrix, calculationTraceMatrix);
+
+
+        handler1.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationCreateMatrix1);
+        handler2.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationCreateMatrix1);
+        handler4.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationCreateMatrix1);
+        
+        handler3.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationCreateMatix2);
+        handler2.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationCreateMatix2);
+        
+        handler1.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationFillRandomMatrix);
+        handler4.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationFillRandomMatrix);
+        handler3.AddDelegate(CalculationHandler.TypeHhandleEvents.CreateMatix1, calculationFillRandomMatrix);
+        
+        handler2.AddDelegate(CalculationHandler.TypeHhandleEvents.ChooseFillMatrix, calculationChooseFillMatrix);
+        handler1.AddDelegate(CalculationHandler.TypeHhandleEvents.ChooseFillMatrix, calculationChooseFillMatrix);
+        handler3.AddDelegate(CalculationHandler.TypeHhandleEvents.ChooseFillMatrix, calculationChooseFillMatrix);
+        
+        handler4.AddDelegate(CalculationHandler.TypeHhandleEvents.PrintMatrix, calculationPrintMatrix);
+        
+        handler4.AddDelegate(CalculationHandler.TypeHhandleEvents.PrintInverseMatrix, calculationInverseMatrix);
+
+        handler2.AddDelegate(CalculationHandler.TypeHhandleEvents.GetHashCode, calculationGetHashCode);
+        handler1.AddDelegate(CalculationHandler.TypeHhandleEvents.GetHashCode, calculationGetHashCode);
+        
+        handler3.AddDelegate(CalculationHandler.TypeHhandleEvents.ChooseCompareMatrix, calculationChooseCompareMatrix);
+        
+        handler1.AddDelegate(CalculationHandler.TypeHhandleEvents.TransposeMatrix, calculationTransposeMatrix);
+        handler4.AddDelegate(CalculationHandler.TypeHhandleEvents.TransposeMatrix, calculationTransposeMatrix);
+        
+        handler1.AddDelegate(CalculationHandler.TypeHhandleEvents.TraceMatrix, calculationTraceMatrix);
+        handler4.AddDelegate(CalculationHandler.TypeHhandleEvents.TraceMatrix, calculationTraceMatrix);
+
+        string functionality = "Функциональность\r\n1) - Создание Основной матрицы\r\n2) - Создание Дополнительной матрицы\r\n3) - Заполнить случайными значениями\r\n4) - Заполнить ручками\r\n5) - Вывести матрицу\r\n6) - Вывести обратную матрицу\r\n7) - Получить хэш код\r\n8) - Сравнить матрицы,\r\n9) - Расширенные возможности";
 
         while (true)
         {
@@ -375,28 +524,39 @@ class Application {
                 switch (pressedKey)
                 {
                     case ConsoleKey.D1:
-                        CreateMatrix(out Matr1);
+                        handler1.HandleRequest(CalculationHandler.TypeHhandleEvents.CreateMatix1);
+                        //CreateMatrix(out Matr1);
                         break;
                     case ConsoleKey.D2:
-                        CreateMatrix(out Matr2);
+                        handler1.HandleRequest(CalculationHandler.TypeHhandleEvents.CreateMatix2);
+                        //CreateMatrix(out Matr2);
                         break;
                     case ConsoleKey.D3:
-                        FillRandomMatrix();
+                        handler1.HandleRequest(CalculationHandler.TypeHhandleEvents.FillRandomMatrix);
+                        //FillRandomMatrix();
                         break;
                     case ConsoleKey.D4:
-                        ChooseFillMatrix();
+                        handler1.HandleRequest(CalculationHandler.TypeHhandleEvents.ChooseFillMatrix);
+                        //ChooseFillMatrix();
                         break;
                     case ConsoleKey.D5:
-                        PrintMatrix();
+                        handler1.HandleRequest(CalculationHandler.TypeHhandleEvents.PrintMatrix);
+                        //PrintMatrix();
                         break;
                     case ConsoleKey.D6:
-                        PrintInverseMatrix();
+                        handler1.HandleRequest(CalculationHandler.TypeHhandleEvents.PrintInverseMatrix);
+                        //PrintInverseMatrix();
                         break;
                     case ConsoleKey.D7:
-                        GetHashCode();
+                        handler1.HandleRequest(CalculationHandler.TypeHhandleEvents.GetHashCode);
+                        //GetHashCode();
                         break;
                     case ConsoleKey.D8:
-                        ChooseCompareMatrix();
+                        //ChooseCompareMatrix();
+                        handler1.HandleRequest(CalculationHandler.TypeHhandleEvents.ChooseCompareMatrix);
+                        break;
+                    case ConsoleKey.D9:
+                        ExtensionChoose();
                         break;
                 }
             }
@@ -548,6 +708,10 @@ public class Matrix : ICloneable
             columnCount = 0;
         }
         Data = new MatrixData(rowCount, columnCount);
+    }
+    public void SetData(MatrixData newData)
+    {
+        this.Data = newData;
     }
 }
 
@@ -1054,7 +1218,7 @@ public static class MatrixExtensions
         }
 
         matrix.SetSize(columnCount, rowCount);
-        matrix = new Matrix(transposedData);
+        matrix.SetData(transposedData);
     }
 
      public static MatrixValue Trace(this Matrix matrix)
@@ -1072,7 +1236,6 @@ public static class MatrixExtensions
             matrix.GetValue(ref value, i, i);
             trace += value;
         }
-
         return trace;
     }
 
@@ -1108,9 +1271,41 @@ public class CalculationHandler
     private CalculationDelegate calculationDelegate;
     private CalculationHandler nextHandler;
 
-    public CalculationHandler(CalculationDelegate calculationDelegate)
+    private DateTime blockHandle;
+    private double sleepMilliSeconds;
+    string nameHandler;
+    //Типы возможномныых перечислений
+    public enum TypeHhandleEvents
     {
-        this.calculationDelegate = calculationDelegate;
+        CreateMatix1,
+        CreateMatix2,
+        FillRandomMatrix,
+        ChooseFillMatrix,
+        PrintMatrix,
+        PrintInverseMatrix,
+        GetHashCode,
+        ChooseCompareMatrix,
+        TransposeMatrix,
+        TraceMatrix,
+    };
+    Dictionary<TypeHhandleEvents, CalculationDelegate> listHandle = new Dictionary<TypeHhandleEvents, CalculationDelegate>();
+
+    public CalculationHandler(string name, double sleepMilliSeconds) {
+        this.sleepMilliSeconds = sleepMilliSeconds;
+        blockHandle = DateTime.Now;
+        this.nameHandler = name;
+    }
+
+    public void AddDelegate(TypeHhandleEvents typeEvent, CalculationDelegate customDelegate)
+    {
+        if (listHandle.ContainsKey(typeEvent))
+        {
+            listHandle[typeEvent] = customDelegate;
+        }
+        else
+        {
+            listHandle.Add(typeEvent, customDelegate);
+        }
     }
 
     public void SetNextHandler(CalculationHandler nextHandler)
@@ -1118,45 +1313,32 @@ public class CalculationHandler
         this.nextHandler = nextHandler;
     }
 
-    public void HandleRequest()
+    public void HandleRequest(CalculationHandler.TypeHhandleEvents typeEvent)
     {
         // Если есть делегат, выполняем вычисление
-        calculationDelegate?.Invoke();
+        Console.WriteLine(nameHandler);
+        if (listHandle.ContainsKey(typeEvent))
+        {
+            if ( DateTime.Now >= blockHandle)
+            {
+                Console.WriteLine("Это я умею, говори что делать");
 
-        // Передаем запрос следующему обработчику в цепочке
-        nextHandler?.HandleRequest();
-    }
-}
+                blockHandle = DateTime.Now;
+                blockHandle = blockHandle.AddMilliseconds(sleepMilliSeconds);
+                listHandle[typeEvent]();
 
-class Program
-{
-    static void Main2(string[] args)
-    {
-        // Создаем делегаты для различных вычислений
-        CalculationHandler.CalculationDelegate calculation1 = () => Console.WriteLine("Выполняется вычисление 1");
-        CalculationHandler.CalculationDelegate calculation2 = () => Console.WriteLine("Выполняется вычисление 2");
-        CalculationHandler.CalculationDelegate calculation3 = () => Console.WriteLine("Выполняется вычисление 3");
-
-        // Создаем обработчики для каждого вычисления
-        CalculationHandler handler1 = new CalculationHandler(calculation1);
-        CalculationHandler handler2 = new CalculationHandler(calculation2);
-        CalculationHandler handler3 = new CalculationHandler(calculation3);
-
-        // Устанавливаем цепочку обработчиков
-        handler1.SetNextHandler(handler2);
-        handler2.SetNextHandler(handler3);
-
-        // Запускаем цепочку вычислений
-        Console.WriteLine("Начало цепочки вычислений:");
-        handler1.HandleRequest();
-
-        // Пример использования методов транспонирования и нахождения следа матрицы
-        Matrix matrix = new Matrix(/* ваш конструктор */);
-
-        // Транспонирование матрицы
-        matrix.Transpose();
-
-        // Нахождение следа матрицы
-        MatrixValue trace = matrix.Trace();
+            }
+            else
+            {
+                Console.WriteLine("Я очень занят, не могу, попроси другого");
+                nextHandler?.HandleRequest(typeEvent);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Это не не ко мне, я такое не умею");
+            //Иначе передаём следующему
+            nextHandler?.HandleRequest(typeEvent);
+        }
     }
 }
