@@ -412,12 +412,11 @@ class Application {
 
 }
 
-class Matrix : ICloneable
+public class Matrix : ICloneable
 {
     protected MatrixData Data = new MatrixData();
     protected int ColumnCount = int.MaxValue;
     protected int RowCount = int.MaxValue;
-
     private void DetermineSizes(MatrixData SourceData, ref int rowCount, ref int columnCount)
     {
         rowCount = SourceData.Count();
@@ -1024,5 +1023,141 @@ public class SmartMatrixExceptionCalculating : SmartMatrixException {
        : base(message) { }
     public override string ToString() {
         return base.ToString();
+    }
+}
+
+
+
+
+
+public static class MatrixExtensions 
+{
+    public static void Transpose(this Matrix matrix)
+    {
+        int rowCount = matrix.GetRowCount();
+        int columnCount = matrix.GetColumnCount();
+
+        MatrixData transposedData = new MatrixData();
+
+        for (int i = 0; i < columnCount; i++)
+        {
+            MatrixRow newRow = new MatrixRow();
+
+            for (int j = 0; j < rowCount; j++)
+            {
+                MatrixValue value = 0;
+                matrix.GetValue(ref value, j, i);
+                newRow.Add(value);
+            }
+
+            transposedData.Add(newRow);
+        }
+
+        matrix.SetSize(columnCount, rowCount);
+        matrix = new Matrix(transposedData);
+    }
+
+     public static MatrixValue Trace(this Matrix matrix)
+    {
+        int rowCount = matrix.GetRowCount();
+        int columnCount = matrix.GetColumnCount();
+
+        MatrixValue trace = 0;
+
+        int minDim = Math.Min(rowCount, columnCount);
+
+        for (int i = 0; i < minDim; i++)
+        {
+            MatrixValue value = 0;
+            matrix.GetValue(ref value, i, i);
+            trace += value;
+        }
+
+        return trace;
+    }
+
+    // Ваши поля, свойства и методы для класса Matrix
+
+    // Создаем делегат Action, который принимает объект Matrix
+    public delegate void DiagonalizeMatrixDelegate(Matrix matrix);
+
+    // Пример анонимного метода для приведения матрицы к диагональному виду
+    public static DiagonalizeMatrixDelegate DiagonalizeMatrix = delegate (Matrix matrix)
+    {
+        int rowCount = matrix.GetRowCount();
+        int columnCount = matrix.GetColumnCount();
+
+        // Пример приведения матрицы к диагональному виду
+        for (int i = 0; i < rowCount; i++)
+        {
+            for (int j = 0; j < columnCount; j++)
+            {
+                if (i != j)
+                {
+                    matrix.SetValue(0, i, j);
+                }
+            }
+        }
+    };
+
+}
+
+public class CalculationHandler
+{
+    public delegate void CalculationDelegate();
+
+    private CalculationDelegate calculationDelegate;
+    private CalculationHandler nextHandler;
+
+    public CalculationHandler(CalculationDelegate calculationDelegate)
+    {
+        this.calculationDelegate = calculationDelegate;
+    }
+
+    public void SetNextHandler(CalculationHandler nextHandler)
+    {
+        this.nextHandler = nextHandler;
+    }
+
+    public void HandleRequest()
+    {
+        // Если есть делегат, выполняем вычисление
+        calculationDelegate?.Invoke();
+
+        // Передаем запрос следующему обработчику в цепочке
+        nextHandler?.HandleRequest();
+    }
+}
+
+class Program
+{
+    static void Main2(string[] args)
+    {
+        // Создаем делегаты для различных вычислений
+        CalculationHandler.CalculationDelegate calculation1 = () => Console.WriteLine("Выполняется вычисление 1");
+        CalculationHandler.CalculationDelegate calculation2 = () => Console.WriteLine("Выполняется вычисление 2");
+        CalculationHandler.CalculationDelegate calculation3 = () => Console.WriteLine("Выполняется вычисление 3");
+
+        // Создаем обработчики для каждого вычисления
+        CalculationHandler handler1 = new CalculationHandler(calculation1);
+        CalculationHandler handler2 = new CalculationHandler(calculation2);
+        CalculationHandler handler3 = new CalculationHandler(calculation3);
+
+        // Устанавливаем цепочку обработчиков
+        handler1.SetNextHandler(handler2);
+        handler2.SetNextHandler(handler3);
+
+        // Запускаем цепочку вычислений
+        Console.WriteLine("Начало цепочки вычислений:");
+        handler1.HandleRequest();
+
+        // Пример использования методов транспонирования и нахождения следа матрицы
+        Matrix matrix = new Matrix(/* ваш конструктор */);
+
+        // Транспонирование матрицы
+        matrix.Transpose();
+
+        // Нахождение следа матрицы
+        MatrixValue trace = matrix.Trace();
     }
 }
