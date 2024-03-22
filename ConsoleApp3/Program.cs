@@ -1191,9 +1191,6 @@ public class SmartMatrixExceptionCalculating : SmartMatrixException {
 }
 
 
-
-
-
 public static class MatrixExtensions 
 {
     public static void Transpose(this Matrix matrix)
@@ -1203,14 +1200,14 @@ public static class MatrixExtensions
 
         MatrixData transposedData = new MatrixData();
 
-        for (int i = 0; i < columnCount; i++)
+        for (int rowIndex = 0; rowIndex < columnCount; ++rowIndex)
         {
             MatrixRow newRow = new MatrixRow();
 
-            for (int j = 0; j < rowCount; j++)
+            for (int columnIndex = 0; columnIndex < rowCount; ++columnIndex)
             {
                 MatrixValue value = 0;
-                matrix.GetValue(ref value, j, i);
+                matrix.GetValue(ref value, columnIndex, rowIndex);
                 newRow.Add(value);
             }
 
@@ -1251,13 +1248,13 @@ public static class MatrixExtensions
         int columnCount = matrix.GetColumnCount();
 
         // Пример приведения матрицы к диагональному виду
-        for (int i = 0; i < rowCount; i++)
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
         {
-            for (int j = 0; j < columnCount; j++)
+            for (int columnIndex = 0; columnIndex < columnCount; ++columnIndex)
             {
-                if (i != j)
+                if (rowIndex != columnIndex)
                 {
-                    matrix.SetValue(0, i, j);
+                    matrix.SetValue(0, rowIndex, columnIndex);
                 }
             }
         }
@@ -1267,8 +1264,7 @@ public static class MatrixExtensions
 public class CalculationHandler
 {
     public delegate void CalculationDelegate();
-
-    private CalculationDelegate calculationDelegate;
+    
     private CalculationHandler nextHandler;
 
     private DateTime blockHandle;
@@ -1292,6 +1288,7 @@ public class CalculationHandler
 
     public CalculationHandler(string name, double sleepMilliSeconds) {
         this.sleepMilliSeconds = sleepMilliSeconds;
+        //Начальное время
         blockHandle = DateTime.Now;
         this.nameHandler = name;
     }
