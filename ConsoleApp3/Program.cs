@@ -9,848 +9,1161 @@ using System.Collections.Generic;
 using System.Collections;
 
 using MatrixValue = double;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-class MatrixRow : List<MatrixValue> {
+public class MatrixRow : List<MatrixValue>
+{
     public MatrixRow() : base() { }
+
     public MatrixRow(IEnumerable<MatrixValue> IList) : base(IList) { }
-    public MatrixRow(Int32 ColumnCount) : base(ColumnCount) {
-        for (Int32 сurColIndex = 0; сurColIndex < ColumnCount; ++сurColIndex) {
+
+    public MatrixRow(int ColumnCount) : base(ColumnCount)
+    {
+        for (int curColIndex = 0; curColIndex < ColumnCount; ++curColIndex)
+        {
             this.Add(0);
         }
     }
 }
-class MatrixData : List<MatrixRow> {
+public class MatrixData : List<MatrixRow>
+{
     public MatrixData() : base() { }
-    public MatrixData(Int32 RowCount) : base(RowCount) { }
-    public MatrixData(Int32 RowCount, Int32 ColumnCount) : base() {
-        for (Int32 сurrowIndex = 0; сurrowIndex < RowCount; ++сurrowIndex) {
+
+    public MatrixData(int RowCount) : base(RowCount) { }
+
+    public MatrixData(int RowCount, int ColumnCount) : base()
+    {
+        for (int curRowIndex = 0; curRowIndex < RowCount; ++curRowIndex)
+        {
             this.Add(new MatrixRow(ColumnCount));
         }
     }
+
     public MatrixData(IEnumerable<MatrixRow> IList) : base(IList) { }
-    public MatrixData(ref IEnumerable<IEnumerable<MatrixValue>> IList) {
+
+    public MatrixData(IEnumerable<IEnumerable<MatrixValue>> IList)
+    {
         int RowCount = IList.Count();
-        for (int rowIndex = 0; rowIndex < RowCount; ++rowIndex) { this.Add(new MatrixRow(IList.ElementAt(rowIndex))); }
+        for (int rowIndex = 0; rowIndex < RowCount; ++rowIndex)
+        {
+            this.Add(new MatrixRow(IList.ElementAt(rowIndex)));
+        }
     }
 }
 
-
 class Application {
-    public static SmartMatrix Matr1, Matr2;
-    public static void CreateMatrix(out SmartMatrix Matr1) {
+    static CalculationHandler handler1 = new CalculationHandler("handler1",20000);
+    static CalculationHandler handler2 = new CalculationHandler("handler2", 5000);
+    static CalculationHandler handler3 = new CalculationHandler("handler3", 15000);
+    static CalculationHandler handler4 = new CalculationHandler("handler4", 40000);
+    static CalculationHandler superHandler = new CalculationHandler("superHandler", 0);
 
+    public static SmartMatrix Matr1, Matr2;
+    public static void CreateMatrix(out SmartMatrix matr1)
+    {
         SmartMatrix matr = new SmartMatrix();
-        //new IEnumerable<MatrixValue> { 1,2,4}
-        //MatrixData = new MatrixData()
 
         Console.WriteLine("Создание матрицы");
         Console.WriteLine("Введите размер квадратной матрицы матрицы");
 
-        int SizeMatrix;
-        string SizeMatrixString = "";
-        while (true) {
-            try {
-                SizeMatrixString = Console.ReadLine();
-                SizeMatrix = int.Parse(SizeMatrixString);
+        int sizeMatrix;
+        string sizeMatrixString = "";
+        while (true)
+        {
+            try
+            {
+                sizeMatrixString = Console.ReadLine();
+                sizeMatrix = int.Parse(sizeMatrixString);
                 break;
             }
-            catch {
+            catch
+            {
                 Console.WriteLine("Попробуйте ввести снова");
             }
         }
-        MatrixData MatrixData = new MatrixData(SizeMatrix, SizeMatrix);
+
+        MatrixData matrixData = new MatrixData(sizeMatrix, sizeMatrix);
         Console.WriteLine("1 - Заполнить рандомными значениями");
         Console.WriteLine("2 - Заполнить ручками");
         Console.WriteLine("3 - Заполнить 0");
-        bool CycleHandilng = true;
-        while (CycleHandilng) {
-            ConsoleKey PressedKey = Console.ReadKey().Key;
+        bool cycleHandling = true;
+        while (cycleHandling)
+        {
+            ConsoleKey pressedKey = Console.ReadKey().Key;
             Console.WriteLine();
-            switch (PressedKey) {
+            switch (pressedKey)
+            {
                 case ConsoleKey.D1:
-                    Matr1 = new SmartMatrix(ref MatrixData);
-                    Matr1.FillRandomValues();
+                    matr1 = new SmartMatrix(matrixData);
+                    matr1.FillRandomValues();
                     Console.WriteLine();
                     return;
                 case ConsoleKey.D2:
-                    MatrixData = FillMatrix(SizeMatrix);
-                    Matr1 = new SmartMatrix(ref MatrixData);
+                    matrixData = FillMatrix(sizeMatrix);
+                    matr1 = new SmartMatrix(matrixData);
                     Console.WriteLine();
                     return;
                 case ConsoleKey.D3:
-                    Matr1 = new SmartMatrix(ref MatrixData);
+                    matr1 = new SmartMatrix(matrixData);
                     Console.WriteLine();
                     return;
             }
         }
-        Matr1 = new SmartMatrix(ref MatrixData);
+        matr1 = new SmartMatrix(matrixData);
     }
-    public static void FillRandomMatrix(int Choose = 0) {
+
+    public static void FillRandomMatrix(int choose = 0)
+    {
         Console.WriteLine("Заполнение матрицы рандомными значениями");
-        ConsoleKey PressedKey; ;
-        switch (Choose) {
+        ConsoleKey pressedKey;
+        switch (choose)
+        {
             case 1:
-                PressedKey = ConsoleKey.D1;
+                pressedKey = ConsoleKey.D1;
                 break;
             case 2:
-                PressedKey = ConsoleKey.D2;
+                pressedKey = ConsoleKey.D2;
                 break;
             default:
-                PressedKey = Console.ReadKey().Key;
                 Console.WriteLine();
                 Console.WriteLine("1 - Основная матрица");
                 Console.WriteLine("2 - Дополнительная матрица");
-                PressedKey = Console.ReadKey().Key;
+                pressedKey = Console.ReadKey().Key;
                 Console.WriteLine();
                 break;
         }
-        switch (PressedKey) {
+        switch (pressedKey)
+        {
             case ConsoleKey.D1:
-                if (Matr1 is null) {
+                if (Matr1 is null)
+                {
                     CreateMatrix(out Matr1);
                 }
-                else {
+                else
+                {
                     Matr1.FillRandomValues();
                 }
                 break;
             case ConsoleKey.D2:
-                if (Matr2 is null) {
+                if (Matr2 is null)
+                {
                     CreateMatrix(out Matr2);
                 }
-                else {
+                else
+                {
                     Matr2.FillRandomValues();
                 }
                 break;
         }
     }
 
-    public static MatrixData FillMatrix(int SizeMatrix) {
-        MatrixData ReturnValue = new MatrixData(SizeMatrix, SizeMatrix);
-        for (int IndexRow = 0; IndexRow < SizeMatrix; ++IndexRow) {
-            for (int IndexColumn = 0; IndexColumn < SizeMatrix; ++IndexColumn) {
-                while (true) {
-                    try {
-                        Console.Write($"Строка {IndexRow} Столбец {IndexColumn} = ");
-                        string InputString = Console.ReadLine();
-                        ReturnValue[IndexRow][IndexColumn] = MatrixValue.Parse(InputString);
+    public static MatrixData FillMatrix(int sizeMatrix)
+    {
+        MatrixData returnValue = new MatrixData(sizeMatrix, sizeMatrix);
+        for (int indexRow = 0; indexRow < sizeMatrix; ++indexRow)
+        {
+            for (int indexColumn = 0; indexColumn < sizeMatrix; ++indexColumn)
+            {
+                while (true)
+                {
+                    try
+                    {
+                        Console.Write($"Строка {indexRow} Столбец {indexColumn} = ");
+                        string inputString = Console.ReadLine();
+                        returnValue[indexRow][indexColumn] = MatrixValue.Parse(inputString);
                         break;
                     }
-                    catch {
+                    catch
+                    {
                         Console.WriteLine("Попробуйте снова");
                     }
                 }
-
             }
         }
-        return ReturnValue;
+        return returnValue;
     }
-    public static void ChooseFillMatrix() {
+
+    public static void ChooseFillMatrix()
+    {
         Console.WriteLine("Заполнение матрицы значениями");
         Console.WriteLine("1 - Основная матрица");
         Console.WriteLine("2 - Дополнительная матрица");
-        ConsoleKey PressedKey = Console.ReadKey().Key;
+        ConsoleKey pressedKey = Console.ReadKey().Key;
         Console.WriteLine();
-        switch (PressedKey) {
-            case ConsoleKey.D1: {
-                    if (Matr1 is null) {
-                        CreateMatrix(out Matr1);
-                    }
-                    else {
-                        MatrixData NewData = FillMatrix(Matr1.GetRowCount());
-                        Matr1 = new SmartMatrix(ref NewData);
-                    }
-                    break;
+        switch (pressedKey)
+        {
+            case ConsoleKey.D1:
+                if (Matr1 is null)
+                {
+                    CreateMatrix(out Matr1);
                 }
-            case ConsoleKey.D2: {
-                    if (Matr2 is null) {
-                        CreateMatrix(out Matr2);
-                    }
-                    else {
-                        MatrixData NewData = FillMatrix(Matr2.GetRowCount());
-                        Matr2 = new SmartMatrix(ref NewData);
-                    }
-                    break;
+                else
+                {
+                    MatrixData newData = FillMatrix(Matr1.GetRowCount());
+                    Matr1 = new SmartMatrix(newData);
                 }
+                break;
+            case ConsoleKey.D2:
+                if (Matr2 is null)
+                {
+                    CreateMatrix(out Matr2);
+                }
+                else
+                {
+                    MatrixData newData = FillMatrix(Matr2.GetRowCount());
+                    Matr2 = new SmartMatrix(newData);
+                }
+                break;
         }
     }
-    public static void PrintMatrix() {
+    public static void PrintMatrix()
+    {
         Console.WriteLine("Вывод матрицы");
         Console.WriteLine("1 - Основная матрица");
         Console.WriteLine("2 - Дополнительная матрица");
-        ConsoleKey PressedKey = Console.ReadKey().Key;
+        ConsoleKey pressedKey = Console.ReadKey().Key;
         Console.WriteLine();
-        switch (PressedKey) {
+        switch (pressedKey)
+        {
             case ConsoleKey.D1:
-                if (Matr1 is null) {
+                if (Matr1 is null)
+                {
                     Console.WriteLine("Матрица не создана");
                 }
-                else {
+                else
+                {
                     Console.WriteLine(Matr1.ToString());
                 }
                 break;
             case ConsoleKey.D2:
-                if (Matr2 is null) {
+                if (Matr2 is null)
+                {
                     Console.WriteLine("Матрица не создана");
                 }
-                else {
+                else
+                {
                     Console.WriteLine(Matr2.ToString());
                 }
                 break;
         }
     }
 
-    public static void GetHashCode() {
-        Console.WriteLine("Вывод матрицы");
+    public static void GetHashCode()
+    {
+        Console.WriteLine("Вывод хэш-кода матрицы");
         Console.WriteLine("1 - Основная матрица");
         Console.WriteLine("2 - Дополнительная матрица");
-        ConsoleKey PressedKey = Console.ReadKey().Key;
+        ConsoleKey pressedKey = Console.ReadKey().Key;
         Console.WriteLine();
-        switch (PressedKey) {
+        switch (pressedKey)
+        {
             case ConsoleKey.D1:
-                if (Matr1 is null) {
+                if (Matr1 is null)
+                {
                     Console.WriteLine("Матрица не создана");
                 }
-                else {
-                    Console.WriteLine(Matr1.GetHashCode());
+                else
+                {
+                    Console.WriteLine("Хэш-код основной матрицы: " + Matr1.GetHashCode());
                 }
                 break;
             case ConsoleKey.D2:
-                if (Matr2 is null) {
+                if (Matr2 is null)
+                {
                     Console.WriteLine("Матрица не создана");
                 }
-                else {
-                    Console.WriteLine(Matr2.GetHashCode());
+                else
+                {
+                    Console.WriteLine("Хэш-код дополнительной матрицы: " + Matr2.GetHashCode());
                 }
                 break;
         }
     }
 
-    public static void PrintInverseMatrix() {
+    public static void PrintInverseMatrix()
+    {
         Console.WriteLine("Вывод обратной матрицы");
         Console.WriteLine("1 - Основная матрица");
         Console.WriteLine("2 - Дополнительная матрица");
-        SmartMatrix Inverse;
-        ConsoleKey PressedKey = Console.ReadKey().Key;
+        SmartMatrix inverse;
+        ConsoleKey pressedKey = Console.ReadKey().Key;
         Console.WriteLine();
-        switch (PressedKey) {
+        switch (pressedKey)
+        {
             case ConsoleKey.D1:
-                if (Matr1 is null) {
+                if (Matr1 is null)
+                {
                     Console.WriteLine("Матрица не создана");
                 }
-                else {
-                    Inverse = Matr1.GetInverseMatrix();
-                    Console.WriteLine(Inverse.ToString());
+                else
+                {
+                    inverse = Matr1.GetInverseMatrix();
+                    Console.WriteLine(inverse.ToString());
                 }
                 break;
             case ConsoleKey.D2:
-                if (Matr2 is null) {
+                if (Matr2 is null)
+                {
                     Console.WriteLine("Матрица не создана");
                 }
-                else {
-                    Inverse = Matr2.GetInverseMatrix();
-                    Console.WriteLine(Inverse.ToString());
+                else
+                {
+                    inverse = Matr2.GetInverseMatrix();
+                    Console.WriteLine(inverse.ToString());
                 }
                 break;
         }
     }
-    public static void ChooseComareMatrix() {
-        if (Matr1 is null) {
-            Console.WriteLine("Основная Матрица не создана");
-            return;
+    public static void ChooseCompareMatrix()
+{
+    if (Matr1 is null)
+    {
+        Console.WriteLine("Основная Матрица не создана");
+        return;
+    }
+    if (Matr2 is null)
+    {
+        Console.WriteLine("Дополнительная Матрица не создана");
+        return;
+    }
+
+    Console.WriteLine("1 - всё сравнение");
+    Console.WriteLine("2 - выборочное сравнение");
+    ConsoleKey pressedKey = Console.ReadKey().Key;
+    Console.WriteLine();
+    switch (pressedKey)
+    {
+        case ConsoleKey.D1:
+            Console.WriteLine("1 - основная матрица меньше дополнительной: " + (Matr1 < Matr2 ? "Да" : "Нет"));
+            Console.WriteLine("2 - основная матрица больше дополнительной: " + (Matr1 > Matr2 ? "Да" : "Нет"));
+            Console.WriteLine("3 - основная матрица равна дополнительной: " + (Matr1 == Matr2 ? "Да" : "Нет"));
+            Console.WriteLine("4 - объекты матриц равны: " + (Matr1.Equals(Matr2) ? "Да" : "Нет"));
+            Console.WriteLine("5 - значения матриц равны: " + (Matr1.EqualsValues(Matr2) ? "Да" : "Нет"));
+            break;
+        case ConsoleKey.D2:
+            Console.WriteLine("1 - основная матрица меньше дополнительной");
+            Console.WriteLine("2 - основная матрица больше дополнительной");
+            Console.WriteLine("3 - основная матрица равна дополнительной");
+            Console.WriteLine("4 - объекты матриц равны");
+            pressedKey = Console.ReadKey().Key;
+            Console.WriteLine();
+            switch (pressedKey)
+            {
+                case ConsoleKey.D1:
+                    Console.WriteLine(Matr1 < Matr2 ? "Да" : "Нет");
+                    break;
+                case ConsoleKey.D2:
+                    Console.WriteLine(Matr1 > Matr2 ? "Да" : "Нет");
+                    break;
+                case ConsoleKey.D3:
+                    Console.WriteLine(Matr1 == Matr2 ? "Да" : "Нет");
+                    break;
+                case ConsoleKey.D4:
+                    Console.WriteLine(Matr1.Equals(Matr2) ? "Да" : "Нет");
+                    break;
+            }
+            break;
+    }
+}
+
+    public static void PrintTransposeMatrix()
+    {
+        if (Matr1 is null)
+        {
+            Console.WriteLine("Матрица1 не создана");
         }
-        if (Matr2 is null) {
-            Console.WriteLine("Дополнительная Матрица не создана");
-            return;
+        else
+        {
+            Matrix val = (Matrix)Matr1;
+            Matr1.Transpose();
+            Console.WriteLine(Matr1);
         }
-        Console.WriteLine("1 - всё сравнение");
-        Console.WriteLine("2 - выборочное сравнение");
-        ConsoleKey PressedKey = Console.ReadKey().Key;
+    }
+    public static void PrintTraceMatrix()
+    {
+        if (Matr1 is null)
+        {
+            Console.WriteLine("Матрица1 не создана");
+        }
+        else
+        {
+            Console.Write("След матрицы1: ");
+            Console.WriteLine(Matr1.Trace());
+            Console.WriteLine(Matr1.ToString());
+        }
+    }
+    public static void ExtensionChoose()
+    {
+        Console.WriteLine("1 - Перевернутая матрица 1");
+        Console.WriteLine("2 - След матрицы 1");
+
+        ConsoleKey pressedKey = Console.ReadKey().Key;
         Console.WriteLine();
-        switch (PressedKey) {
-            case ConsoleKey.D1: {
-                    Console.Write("1 - основная матрица меньше дополнительной");
-                    if (Matr1 < Matr2) {
-                        Console.WriteLine(" Да");
-                    }
-                    else {
-                        Console.WriteLine(" Нет");
-                    }
-                    Console.Write("2 - основная матрица больше дополнительной");
-                    if (Matr1 > Matr2) {
-                        Console.WriteLine(" Да");
-                    }
-                    else {
-                        Console.WriteLine(" Нет");
-                    }
-                    Console.Write("3 - основная матрица равна дополнительной");
-                    if (Matr1 == Matr2) {
-                        Console.WriteLine(" Да");
-                    }
-                    else {
-                        Console.WriteLine(" Нет");
-                    }
-                    Console.Write("4 - объекты матриц равны");
-                    if (Matr1.Equals(Matr2)) {
-                        Console.WriteLine(" Да");
-                    }
-                    else {
-                        Console.WriteLine(" Нет");
-                    }
-                    Console.Write("5 - значения матриц равны");
-                    if (Matr1.EqualsValuse(Matr2)) {
-                        Console.WriteLine(" Да");
-                    }
-                    else {
-                        Console.WriteLine(" Нет");
-                    }
-                }
+        switch (pressedKey)
+        {
+            case ConsoleKey.D1:
+                handler1.HandleRequest(CalculationHandler.TypeHandleEvents.TransposeMatrix);
                 break;
-            case ConsoleKey.D2: {
-                    Console.WriteLine("1 - основная матрица меньше дополнительной");
-                    Console.WriteLine("2 - основная матрица больше дополнительной");
-                    Console.WriteLine("3 - основная матрица равна дополнительной");
-                    Console.WriteLine("4 - объекты матриц равны");
-                    PressedKey = Console.ReadKey().Key;
-                    Console.WriteLine();
-                    switch (PressedKey) {
-                        case ConsoleKey.D1:
-                            if (Matr1 < Matr2) {
-                                Console.WriteLine("Да");
-                            }
-                            else {
-                                Console.WriteLine("Нет");
-                            }
-                            break;
-                        case ConsoleKey.D2:
-                            if (Matr1 > Matr2) {
-                                Console.WriteLine("Да");
-                            }
-                            else {
-                                Console.WriteLine("Нет");
-                            }
-                            break;
-                        case ConsoleKey.D3:
-                            if (Matr1 == Matr2) {
-                                Console.WriteLine("Да");
-                            }
-                            else {
-                                Console.WriteLine("Нет");
-                            }
-                            break;
-                        case ConsoleKey.D4:
-                            if (Matr1.Equals(Matr2)) {
-                                Console.WriteLine("Да");
-                            }
-                            else {
-                                Console.WriteLine("Нет");
-                            }
-                            break;
-                    }
-                }
+            case ConsoleKey.D2:
+                handler1.HandleRequest(CalculationHandler.TypeHandleEvents.TraceMatrix);
                 break;
+
         }
     }
-    public static void Main(string[] args) {
-        string functiality = "Функциональность\r\n1) - Создание Основной матрицы\r\n2) - Создание Дополнительной матрицы\r\n3) - Заполнить случайными значениями\r\n4) - Заполнить ручками\r\n5) - Вывести матрицу\r\n6) - Вывести обратную матрицу\r\n7) - Получить хэш код\r\n8) - Сравнить матрицы";
-        while (true) {
+    static void EventCreateMatix1()
+    {
+        CreateMatrix(out Matr1);
+    }
+    static void EventCreateMatix2()
+    {
+        CreateMatrix(out Matr2);
+    }
+    static void EventFillRandomMatrix()
+    {
+        FillRandomMatrix();
+    }
+    static void EventChooseFillMatrix()
+    {
+        ChooseFillMatrix();
+    }
+    static void EventPrintMatrix()
+    {
+        PrintMatrix();
+    }
+    static void EventPrintInverseMatrix()
+    {
+        PrintInverseMatrix();
+    }
+    static void EventGetHashCode()
+    {
+        GetHashCode();
+    }
+    static void EventChooseCompareMatrix()
+    {
+        ChooseCompareMatrix();
+    }
+    static void EventTransposeMatrix()
+    {
+        PrintTransposeMatrix();
+    }
+    static void EventTraceMatrix()
+    {
+        PrintTraceMatrix();
+    }
+
+    public static void Main(string[] args)
+    {
+        //CalculationHandler.CalculationDelegate calculation = () => { EventCreateMatix1(); };
+        CalculationHandler.CalculationDelegate calculationCreateMatrix1 = EventCreateMatix1;
+        CalculationHandler.CalculationDelegate calculationCreateMatix2 = EventCreateMatix2;
+        CalculationHandler.CalculationDelegate calculationFillRandomMatrix = EventFillRandomMatrix;
+        CalculationHandler.CalculationDelegate calculationChooseFillMatrix = EventChooseFillMatrix;
+        CalculationHandler.CalculationDelegate calculationPrintMatrix = EventPrintMatrix;
+        CalculationHandler.CalculationDelegate calculationInverseMatrix = EventPrintInverseMatrix;
+        CalculationHandler.CalculationDelegate calculationGetHashCode = EventGetHashCode;
+        CalculationHandler.CalculationDelegate calculationChooseCompareMatrix = EventChooseCompareMatrix;
+        CalculationHandler.CalculationDelegate calculationTransposeMatrix = EventTransposeMatrix;
+        CalculationHandler.CalculationDelegate calculationTraceMatrix = EventTraceMatrix;
+
+        handler1.SetNextHandler(handler2);
+        handler2.SetNextHandler(handler3);
+        handler3.SetNextHandler(handler4);
+        handler4.SetNextHandler(superHandler);
+
+        superHandler.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationCreateMatrix1);
+        superHandler.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationCreateMatix2);
+        superHandler.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationFillRandomMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHandleEvents.ChooseFillMatrix, calculationChooseFillMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHandleEvents.PrintMatrix, calculationPrintMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHandleEvents.PrintInverseMatrix, calculationInverseMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHandleEvents.GetHashCode, calculationGetHashCode);
+        superHandler.AddDelegate(CalculationHandler.TypeHandleEvents.ChooseCompareMatrix, calculationChooseCompareMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHandleEvents.TransposeMatrix, calculationTransposeMatrix);
+        superHandler.AddDelegate(CalculationHandler.TypeHandleEvents.TraceMatrix, calculationTraceMatrix);
+
+
+        handler1.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationCreateMatrix1);
+        handler2.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationCreateMatrix1);
+        handler4.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationCreateMatrix1);
+        
+        handler3.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationCreateMatix2);
+        handler2.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationCreateMatix2);
+        
+        handler1.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationFillRandomMatrix);
+        handler4.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationFillRandomMatrix);
+        handler3.AddDelegate(CalculationHandler.TypeHandleEvents.CreateMatix1, calculationFillRandomMatrix);
+        
+        handler2.AddDelegate(CalculationHandler.TypeHandleEvents.ChooseFillMatrix, calculationChooseFillMatrix);
+        handler1.AddDelegate(CalculationHandler.TypeHandleEvents.ChooseFillMatrix, calculationChooseFillMatrix);
+        handler3.AddDelegate(CalculationHandler.TypeHandleEvents.ChooseFillMatrix, calculationChooseFillMatrix);
+        
+        handler4.AddDelegate(CalculationHandler.TypeHandleEvents.PrintMatrix, calculationPrintMatrix);
+        
+        handler4.AddDelegate(CalculationHandler.TypeHandleEvents.PrintInverseMatrix, calculationInverseMatrix);
+
+        handler2.AddDelegate(CalculationHandler.TypeHandleEvents.GetHashCode, calculationGetHashCode);
+        handler1.AddDelegate(CalculationHandler.TypeHandleEvents.GetHashCode, calculationGetHashCode);
+        
+        handler3.AddDelegate(CalculationHandler.TypeHandleEvents.ChooseCompareMatrix, calculationChooseCompareMatrix);
+        
+        handler1.AddDelegate(CalculationHandler.TypeHandleEvents.TransposeMatrix, calculationTransposeMatrix);
+        handler4.AddDelegate(CalculationHandler.TypeHandleEvents.TransposeMatrix, calculationTransposeMatrix);
+        
+        handler1.AddDelegate(CalculationHandler.TypeHandleEvents.TraceMatrix, calculationTraceMatrix);
+        handler4.AddDelegate(CalculationHandler.TypeHandleEvents.TraceMatrix, calculationTraceMatrix);
+
+        string functionality = "Функциональность\r\n1) - Создание Основной матрицы\r\n2) - Создание Дополнительной матрицы\r\n3) - Заполнить случайными значениями\r\n4) - Заполнить ручками\r\n5) - Вывести матрицу\r\n6) - Вывести обратную матрицу\r\n7) - Получить хэш код\r\n8) - Сравнить матрицы,\r\n9) - Расширенные возможности";
+
+        while (true)
+        {
             Console.Clear();
-            Console.WriteLine(functiality);
-            try {
-                ConsoleKey PressedKey = Console.ReadKey().Key;
+            Console.WriteLine(functionality);
+            try
+            {
+                ConsoleKey pressedKey = Console.ReadKey().Key;
                 Console.WriteLine();
-                switch (PressedKey) {
+                switch (pressedKey)
+                {
                     case ConsoleKey.D1:
-                        CreateMatrix(out Matr1);
+                        handler1.HandleRequest(CalculationHandler.TypeHandleEvents.CreateMatix1);
+                        //CreateMatrix(out Matr1);
                         break;
                     case ConsoleKey.D2:
-                        CreateMatrix(out Matr2);
+                        handler1.HandleRequest(CalculationHandler.TypeHandleEvents.CreateMatix2);
+                        //CreateMatrix(out Matr2);
                         break;
                     case ConsoleKey.D3:
-                        FillRandomMatrix();
+                        handler1.HandleRequest(CalculationHandler.TypeHandleEvents.FillRandomMatrix);
+                        //FillRandomMatrix();
                         break;
                     case ConsoleKey.D4:
-                        ChooseFillMatrix();
+                        handler1.HandleRequest(CalculationHandler.TypeHandleEvents.ChooseFillMatrix);
+                        //ChooseFillMatrix();
                         break;
                     case ConsoleKey.D5:
-                        PrintMatrix();
+                        handler1.HandleRequest(CalculationHandler.TypeHandleEvents.PrintMatrix);
+                        //PrintMatrix();
                         break;
                     case ConsoleKey.D6:
-                        PrintInverseMatrix();
+                        handler1.HandleRequest(CalculationHandler.TypeHandleEvents.PrintInverseMatrix);
+                        //PrintInverseMatrix();
                         break;
                     case ConsoleKey.D7:
-                        GetHashCode();
+                        handler1.HandleRequest(CalculationHandler.TypeHandleEvents.GetHashCode);
+                        //GetHashCode();
                         break;
                     case ConsoleKey.D8:
-                        ChooseComareMatrix();
+                        //ChooseCompareMatrix();
+                        handler1.HandleRequest(CalculationHandler.TypeHandleEvents.ChooseCompareMatrix);
+                        break;
+                    case ConsoleKey.D9:
+                        ExtensionChoose();
                         break;
                 }
             }
-            catch (SmartMatrixException except) {
-                Console.WriteLine(except.ToString());
+            catch (SmartMatrixException ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
+
             Console.WriteLine("Выполнено. Нажмите любую кнопку для продолжения");
             Console.ReadKey();
         }
-
     }
+
 }
-class Matrix : ICloneable {
+
+public class Matrix : ICloneable
+{
     protected MatrixData Data = new MatrixData();
     protected int ColumnCount = int.MaxValue;
     protected int RowCount = int.MaxValue;
-    private void DetermineSizes(ref MatrixData SourceDara, ref int RowCount, ref int ColumnCount) {
-        RowCount = SourceDara.Count();
-        ColumnCount = SourceDara[0].Count();
-    }
-    public Matrix GetThisTypeObject() {
-        return this;
-    }
-    public Matrix() { }
-    public Matrix(ref MatrixData SourceDara) {
-        Data = SourceDara;
-        DetermineSizes(ref Data, ref RowCount, ref ColumnCount);
-    }
-    public Matrix(ref IEnumerable<MatrixRow> IList) {
-        Data = new MatrixData(IList);
-        DetermineSizes(ref Data, ref RowCount, ref ColumnCount);
-    }
-    public Matrix(ref IEnumerable<IEnumerable<MatrixValue>> IList) {
-        Data = new MatrixData(ref IList);
-        DetermineSizes(ref Data, ref RowCount, ref ColumnCount);
+    private void DetermineSizes(MatrixData SourceData, ref int rowCount, ref int columnCount)
+    {
+        rowCount = SourceData.Count();
+        if (rowCount > 0)
+        {
+            columnCount = SourceData[0].Count();
+        }
     }
 
-    public Matrix(ref Matrix BasedObject) {
-        Matrix ThisObject = this;
-        CloneRef(ref BasedObject, ref ThisObject);
+    public Matrix() { }
+
+    public Matrix(MatrixData SourceData)
+    {
+        Data = SourceData;
+        DetermineSizes(Data, ref RowCount, ref ColumnCount);
     }
-    public object Clone() {
-        Matrix ClonnedObject;
-        CloneOut(out ClonnedObject);
-        return ClonnedObject;
+
+    public Matrix(IEnumerable<MatrixRow> IList)
+    {
+        Data = new MatrixData(IList);
+        DetermineSizes(Data, ref RowCount, ref ColumnCount);
     }
-    public void CloneOut(out Matrix NewObject) {
-        NewObject = new Matrix();
-        Matrix ThisObject = this;
-        CloneRef(ref NewObject, ref ThisObject);
+
+    public Matrix(IEnumerable<IEnumerable<MatrixValue>> IList)
+    {
+        Data = new MatrixData(IList);
+        DetermineSizes(Data, ref RowCount, ref ColumnCount);
     }
-    public void CloneRef(ref Matrix NewObject, ref Matrix OldObject) {
-        NewObject.Data = new MatrixData(OldObject.Data);
-        NewObject.RowCount = OldObject.RowCount;
-        NewObject.ColumnCount = OldObject.ColumnCount;
+
+    public Matrix(Matrix BasedObject)
+    {
+        CloneRef(BasedObject, this);
     }
-    ///return 0 если индексы валидны 1 - не валиден индекс строки 2 - не валиден индекс столбца 3 - количество столбцов строки меньше глобального количества столбцов
-    int IsIndexValid(int rowIndex, int ColumnIndex) {
-        if (rowIndex < 0 || rowIndex >= (RowCount)) {
+
+    public object Clone()
+    {
+        Matrix clonedObject;
+        CloneOut(out clonedObject);
+        return clonedObject;
+    }
+
+    public void CloneOut(out Matrix newObject)
+    {
+        newObject = new Matrix();
+        CloneRef(this, newObject);
+    }
+
+    public void CloneRef(Matrix oldObject, Matrix newObject)
+    {
+        newObject.Data = new MatrixData(oldObject.Data);
+        newObject.RowCount = oldObject.RowCount;
+        newObject.ColumnCount = oldObject.ColumnCount;
+    }
+
+    // Returns:
+    // 0 - если индексы валидны
+    // 1 - не валиден индекс строки
+    // 2 - не валиден индекс столбца
+    // 3 - количество столбцов строки меньше глобального количества столбцов
+    private int IsIndexValid(int rowIndex, int columnIndex)
+    {
+        if (rowIndex < 0 || rowIndex >= RowCount)
+        {
             return 1;
         }
-        if (ColumnIndex < 0 || ColumnIndex >= (ColumnCount)) {
+        if (columnIndex < 0 || columnIndex >= ColumnCount)
+        {
             return 2;
         }
-        if (ColumnIndex>= this.Data.Count) {
+        if (columnIndex >= Data.Count)
+        {
             return 3;
         }
-        if (ColumnIndex >= this.Data[rowIndex].Count) {
+        if (columnIndex >= Data[rowIndex].Count)
+        {
             return 4;
         }
         return 0;
     }
 
-    public int GetRowCount() {
+    public int GetRowCount()
+    {
         return RowCount;
     }
-    public int GetColumnCount() {
+
+    public int GetColumnCount()
+    {
         return ColumnCount;
     }
-    public int GetValue(MatrixValue Value, int rowIndex, int ColumnIndex) {
-        return GetValue(ref Value, rowIndex, ColumnIndex);
-    }
-    public int GetValue(ref MatrixValue Value, int rowIndex, int ColumnIndex) {
-        if (IsIndexValid(rowIndex, ColumnIndex) != 0) {
+
+    public int GetValue(ref MatrixValue value, int rowIndex, int columnIndex)
+    {
+        if (IsIndexValid(rowIndex, columnIndex) != 0)
+        {
             return 1;
         }
-        Value = Data[rowIndex][ColumnIndex];
+        value = Data[rowIndex][columnIndex];
         return 0;
     }
 
-    //Unsafe
-    private MatrixValue GetValue(int rowIndex, int ColumnIndex) {
-        if (IsIndexValid(rowIndex, ColumnIndex) != 0) {
+    // Unsafe
+    private MatrixValue GetValue(int rowIndex, int columnIndex)
+    {
+        if (IsIndexValid(rowIndex, columnIndex) != 0)
+        {
             return MatrixValue.MaxValue;
         }
-        return Data[rowIndex][ColumnIndex];
+        return Data[rowIndex][columnIndex];
     }
-    public int SetValue(MatrixValue Value, int rowIndex, int ColumnIndex) {
-        if (IsIndexValid(rowIndex, ColumnIndex) != 0) {
+
+    public int SetValue(MatrixValue value, int rowIndex, int columnIndex)
+    {
+        if (IsIndexValid(rowIndex, columnIndex) != 0)
+        {
             return 1;
         }
-        Data[rowIndex][ColumnIndex] =  Value;
+        Data[rowIndex][columnIndex] = value;
         return 0;
     }
-    public void SetSize(int RowCount, int ColumnCount) {
-        if (RowCount < 0) {
-            RowCount = 0;
+
+    public void SetSize(int rowCount, int columnCount)
+    {
+        if (rowCount < 0)
+        {
+            rowCount = 0;
         }
-        if (ColumnCount < 0) {
-            ColumnCount = 0;
+        if (columnCount < 0)
+        {
+            columnCount = 0;
         }
-        Data = new MatrixData(RowCount, ColumnCount);
+        Data = new MatrixData(rowCount, columnCount);
     }
-};
-class MatrixUtils {
-    public void PrintMatrix(ref Matrix InputMatrix) {
-        string PrintedString = "";
-        PrintMatrix(ref InputMatrix, ref PrintedString);
-        Console.Write(PrintedString);
+    public void SetData(MatrixData newData)
+    {
+        this.Data = newData;
+    }
+}
+
+class MatrixMatrixUtils {
+    public void PrintMatrix(Matrix inputMatrix)
+    {
+        string printedString = "";
+        PrintMatrix(inputMatrix, ref printedString);
+        Console.Write(printedString);
     }
 
-    public void PrintMatrix(ref Matrix InputMatrix, ref string OutputString) {
-        int RowCount = InputMatrix.GetRowCount(), ColumnCount = InputMatrix.GetColumnCount()
-    , currentRow, currentCollumn;
-        MatrixValue TempValue = 0;
-        int RetCode;
-        for (currentRow = 0; currentRow < RowCount; ++currentRow) {
-            for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
-                RetCode = InputMatrix.GetValue(ref TempValue, currentRow, currentCollumn);
-                if (RetCode != 0) {
-                    throw new SmartMatrixExceptionControl($"Ошибка получения значения матрицы по индексам {currentRow} {currentCollumn}");
+    public void PrintMatrix(Matrix inputMatrix, ref string outputString)
+    {
+        int rowCount = inputMatrix.GetRowCount(), columnCount = inputMatrix.GetColumnCount(), currentRow, currentColumn;
+        MatrixValue tempValue = 0;
+        int retCode;
+        for (currentRow = 0; currentRow < rowCount; ++currentRow)
+        {
+            for (currentColumn = 0; currentColumn < columnCount; ++currentColumn)
+            {
+                retCode = inputMatrix.GetValue(ref tempValue, currentRow, currentColumn);
+                if (retCode != 0)
+                {
+                    throw new SmartMatrixExceptionControl($"Ошибка получения значения матрицы по индексам {currentRow} {currentColumn}");
                 }
-                OutputString += TempValue + " ";
+                outputString += tempValue + " ";
             }
-            OutputString += "\n";
+            outputString += "\n";
         }
     }
 
-    private Random RandomInstance;
-    Random GetRandomInstance() {
-        if (RandomInstance == null) {
-            RandomInstance = new Random();
+    private Random randomInstance;
+    Random GetRandomInstance()
+    {
+        if (randomInstance == null)
+        {
+            randomInstance = new Random();
         }
-        return RandomInstance;
+        return randomInstance;
     }
-    public void GenearateRandomSize(ref Matrix InputMatrix, int MaxRows, int MaxColumns) {
-        int ColumnCount = GenerateRandomNumber(1, MaxColumns);
-        int RowCount = GenerateRandomNumber(1, MaxRows);
-        InputMatrix.SetSize(RowCount, ColumnCount);
+
+    public void GenerateRandomSize(Matrix inputMatrix, int maxRows, int maxColumns)
+    {
+        int columnCount = GenerateRandomNumber(1, maxColumns);
+        int rowCount = GenerateRandomNumber(1, maxRows);
+        inputMatrix.SetSize(rowCount, columnCount);
     }
-    public void FillRandomValues(ref Matrix InputMatrix) {
-        int RowCount = InputMatrix.GetRowCount(), ColumnCount = InputMatrix.GetColumnCount()
-            , currentRow, currentCollumn;
-        MatrixValue NewValue;
-        for (currentRow = 0; currentRow < RowCount; ++currentRow) {
-            for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
-                NewValue = GetRandomMatrixValue(-100, 100);
-                InputMatrix.SetValue(NewValue, currentRow, currentCollumn);
+
+    public void FillRandomValues(Matrix inputMatrix)
+    {
+        int rowCount = inputMatrix.GetRowCount(), columnCount = inputMatrix.GetColumnCount(), currentRow, currentColumn;
+        MatrixValue newValue;
+        for (currentRow = 0; currentRow < rowCount; ++currentRow)
+        {
+            for (currentColumn = 0; currentColumn < columnCount; ++currentColumn)
+            {
+                newValue = GetRandomMatrixValue(-100, 100);
+                inputMatrix.SetValue(newValue, currentRow, currentColumn);
             }
         }
     }
 
-    public int AddMatrix(ref Matrix MatrixLeft, ref Matrix MatrixRight) {
-        if (!IsSizesEqual(ref MatrixLeft, ref MatrixRight)) {
+    public int AddMatrix(Matrix matrixLeft, Matrix matrixRight)
+    {
+        if (!IsSizesEqual(matrixLeft, matrixRight))
+        {
             return 1;
         }
-        int RowCount = MatrixLeft.GetRowCount(), ColumnCount = MatrixLeft.GetColumnCount()
-            , currentRow, currentCollumn;
-        MatrixValue LeftValue = 0, RightValue = 0;
-        int RetCode = 0;
+        int rowCount = matrixLeft.GetRowCount(), columnCount = matrixLeft.GetColumnCount(), currentRow, currentColumn;
+        MatrixValue leftValue = 0, rightValue = 0;
+        int retCode = 0;
 
-        for (currentRow = 0; currentRow < RowCount; ++currentRow) {
-            for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
-                RetCode = MatrixLeft.GetValue(ref LeftValue, currentRow, currentCollumn);
-                RetCode |= MatrixRight.GetValue(ref RightValue, currentRow, currentCollumn);
-                if (RetCode != 0) {
-                    throw new SmartMatrixExceptionControl($"Ошибка получения значения матрицы по индексам {currentRow} {currentCollumn}");
+        for (currentRow = 0; currentRow < rowCount; ++currentRow)
+        {
+            for (currentColumn = 0; currentColumn < columnCount; ++currentColumn)
+            {
+                retCode = matrixLeft.GetValue(ref leftValue, currentRow, currentColumn);
+                retCode |= matrixRight.GetValue(ref rightValue, currentRow, currentColumn);
+                if (retCode != 0)
+                {
+                    throw new SmartMatrixExceptionControl($"Ошибка получения значения матрицы по индексам {currentRow} {currentColumn}");
                 }
-                LeftValue += RightValue;
-                MatrixLeft.SetValue(LeftValue, currentRow, currentCollumn);
+                leftValue += rightValue;
+                matrixLeft.SetValue(leftValue, currentRow, currentColumn);
             }
         }
         return 0;
     }
-    private bool IsSizesEqual(ref Matrix MatrixLeft, ref Matrix MatrixRight) {
-        if (MatrixLeft.GetColumnCount() == MatrixRight.GetColumnCount() && MatrixLeft.GetRowCount() == MatrixRight.GetRowCount()) {
+
+    private bool IsSizesEqual(Matrix matrixLeft, Matrix matrixRight)
+    {
+        if (matrixLeft.GetColumnCount() == matrixRight.GetColumnCount() && matrixLeft.GetRowCount() == matrixRight.GetRowCount())
+        {
             return true;
         }
         return false;
     }
-    public bool IsMatrixEqual(ref Matrix MatrixLeft, ref Matrix MatrixRight) {
-        if (MatrixLeft.GetColumnCount() == MatrixRight.GetColumnCount() && MatrixLeft.GetRowCount() == MatrixRight.GetRowCount()) {
-            MatrixValue LeftValue = 0, RightValue = 0;
-            int RetCode = 0;
-            int RowCount = MatrixLeft.GetRowCount(), ColumnCount = MatrixLeft.GetColumnCount(), currentRow, currentCollumn;
-            for (currentRow = 0; currentRow < RowCount; ++currentRow) {
-                for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
-                    RetCode = MatrixLeft.GetValue(ref LeftValue, currentRow, currentCollumn);
-                    RetCode |= MatrixRight.GetValue(ref RightValue, currentRow, currentCollumn);
-                    if (RetCode != 0) {
-                        throw new SmartMatrixExceptionControl($"Ошибка получения значения матрицы по индексам {currentRow} {currentCollumn}") ;
+
+    public bool IsMatrixEqual(Matrix matrixLeft, Matrix matrixRight)
+    {
+        if (matrixLeft.GetColumnCount() == matrixRight.GetColumnCount() && matrixLeft.GetRowCount() == matrixRight.GetRowCount())
+        {
+            MatrixValue leftValue = 0, rightValue = 0;
+            int retCode = 0;
+            int rowCount = matrixLeft.GetRowCount(), columnCount = matrixLeft.GetColumnCount(), currentRow, currentColumn;
+            for (currentRow = 0; currentRow < rowCount; ++currentRow)
+            {
+                for (currentColumn = 0; currentColumn < columnCount; ++currentColumn)
+                {
+                    retCode = matrixLeft.GetValue(ref leftValue, currentRow, currentColumn);
+                    retCode |= matrixRight.GetValue(ref rightValue, currentRow, currentColumn);
+                    if (retCode != 0)
+                    {
+                        throw new SmartMatrixExceptionControl($"Ошибка получения значения матрицы по индексам {currentRow} {currentColumn}");
                     }
-                    if (LeftValue != RightValue) ;
-                    return false;
+                    if (leftValue != rightValue)
+                    {
+                        return false;
+                    }
                 }
             }
         }
         return true;
     }
 
-    int GetMinorMatrix(ref Matrix SourceMatrix, int rowIndex, int ColumnIndex, ref Matrix OutputMatrix) {
-        int RowCount = SourceMatrix.GetRowCount(), ColumnCount = SourceMatrix.GetColumnCount(), currentRow, currentCollumn;
-        IEnumerable<IEnumerable<MatrixValue>> MatrixCollection = new MatrixData();
+    public int GetMinorMatrix(Matrix sourceMatrix, int rowIndex, int columnIndex, ref Matrix outputMatrix)
+    {
+        int rowCount = sourceMatrix.GetRowCount(), columnCount = sourceMatrix.GetColumnCount(), currentRow, currentColumn;
+        IEnumerable<IEnumerable<MatrixValue>> matrixCollection = new MatrixData();
 
-        MatrixValue Value = 0;
-        if (SourceMatrix.GetColumnCount() == 1) {
-            if (SourceMatrix.GetValue(ref Value, 1, 1) != 0) {
+        MatrixValue value = 0;
+        if (sourceMatrix.GetColumnCount() == 1)
+        {
+            if (sourceMatrix.GetValue(ref value, 1, 1) != 0)
+            {
                 return 1;
             }
-            MatrixCollection = MatrixCollection.Append(new MatrixRow() { Value });
+            matrixCollection = matrixCollection.Append(new MatrixRow() { value });
         }
-        else {
-            for (currentRow = 0; currentRow < RowCount; ++currentRow) {
-                IEnumerable<MatrixValue> RowCollection = new MatrixRow();
-                if (currentRow == rowIndex) {
+        else
+        {
+            for (currentRow = 0; currentRow < rowCount; ++currentRow)
+            {
+                IEnumerable<MatrixValue> rowCollection = new MatrixRow();
+                if (currentRow == rowIndex)
+                {
                     continue;
                 }
-                for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
-                    if (currentCollumn == ColumnIndex) {
+                for (currentColumn = 0; currentColumn < columnCount; ++currentColumn)
+                {
+                    if (currentColumn == columnIndex)
+                    {
                         continue;
                     }
-                    if (SourceMatrix.GetValue(ref Value, currentRow, currentCollumn) != 0) {
+                    if (sourceMatrix.GetValue(ref value, currentRow, currentColumn) != 0)
+                    {
                         return 1;
                     }
-                    RowCollection = RowCollection.Append(Value);
+                    rowCollection = rowCollection.Append(value);
                 }
-                MatrixCollection = MatrixCollection.Append(RowCollection);
+                matrixCollection = matrixCollection.Append(rowCollection);
             }
         }
-        OutputMatrix = new Matrix(ref MatrixCollection);
+        outputMatrix = new Matrix(matrixCollection);
         return 0;
     }
-    public int DetermineDeterminant(ref Matrix SourceMatrix, ref double OutDeterminant) {
-        if (SourceMatrix.GetColumnCount() != SourceMatrix.GetRowCount()) {
+
+    public int DetermineDeterminant(Matrix sourceMatrix, ref double outDeterminant)
+    {
+        if (sourceMatrix.GetColumnCount() != sourceMatrix.GetRowCount())
+        {
             return 1;
         }
 
-        OutDeterminant = 0;
-        double Determinant = 0, CurIndexValue = 0, CurIndexMinorDeterminantValue = 0;
-        int CurrentColumn, ColumnCount = SourceMatrix.GetColumnCount();
-        Matrix MinorMatrix = new Matrix();
-        int RetCode = 0;
-        if (SourceMatrix.GetColumnCount() == 1) {
-            SourceMatrix.GetValue(ref OutDeterminant, 0, 0);
+        outDeterminant = 0;
+        double determinant = 0, curIndexValue = 0, curIndexMinorDeterminantValue = 0;
+        int currentColumn, columnCount = sourceMatrix.GetColumnCount();
+        Matrix minorMatrix = new Matrix();
+        int retCode = 0;
+        if (sourceMatrix.GetColumnCount() == 1)
+        {
+            sourceMatrix.GetValue(ref outDeterminant, 0, 0);
             return 0;
         }
-        for (CurrentColumn = 0; CurrentColumn < ColumnCount; ++CurrentColumn) {
-            RetCode = SourceMatrix.GetValue(ref CurIndexValue, 0, CurrentColumn);
-            if (RetCode != 0) {
+        for (currentColumn = 0; currentColumn < columnCount; ++currentColumn)
+        {
+            retCode = sourceMatrix.GetValue(ref curIndexValue, 0, currentColumn);
+            if (retCode != 0)
+            {
                 return 1;
             }
-            if (GetMinorMatrix(ref SourceMatrix, 0, CurrentColumn, ref MinorMatrix) != 0) {
+            if (GetMinorMatrix(sourceMatrix, 0, currentColumn, ref minorMatrix) != 0)
+            {
                 return 2;
             }
-            if (MinorMatrix.GetColumnCount() == 1) {
-                RetCode = MinorMatrix.GetValue(ref CurIndexMinorDeterminantValue, 0, 0);
-                if (RetCode != 0) {
+            if (minorMatrix.GetColumnCount() == 1)
+            {
+                retCode = minorMatrix.GetValue(ref curIndexMinorDeterminantValue, 0, 0);
+                if (retCode != 0)
+                {
                     return 1;
                 }
-
             }
-            else {
-                DetermineDeterminant(ref MinorMatrix, ref Determinant);
-                CurIndexMinorDeterminantValue = Determinant;
+            else
+            {
+                DetermineDeterminant(minorMatrix, ref determinant);
+                curIndexMinorDeterminantValue = determinant;
             }
-            //Console.WriteLine($"{CurIndexValue} {CurIndexMinorDeterminantValue} {CurIndexMinorDeterminantValue *CurIndexValue}");
-            CurIndexValue *= CurIndexMinorDeterminantValue;
-            if (CurrentColumn % 2 == 1) {
-                CurIndexValue *= -1;
+            curIndexValue *= curIndexMinorDeterminantValue;
+            if (currentColumn % 2 == 1)
+            {
+                curIndexValue *= -1;
             }
-            OutDeterminant += CurIndexValue;
+            outDeterminant += curIndexValue;
         }
         return 0;
     }
 
-    public int GetInverseMatrix(ref Matrix SourceMatrix, ref Matrix OutMatrix) {
-        MatrixValue Determinant = 0;
-        if (DetermineDeterminant(ref SourceMatrix, ref Determinant) != 0) {
+
+    public int GetInverseMatrix(Matrix sourceMatrix, Matrix outMatrix)
+    {
+        MatrixValue determinant = 0;
+        if (DetermineDeterminant(sourceMatrix, ref determinant) != 0)
+        {
             return 1;
         }
-        OutMatrix.CloneRef(ref OutMatrix,ref SourceMatrix);
+        outMatrix.CloneRef(outMatrix, sourceMatrix);
 
-        int RowCount = SourceMatrix.GetRowCount(), ColumnCount = SourceMatrix.GetColumnCount()
-    , currentRow, currentCollumn;
-        MatrixValue GettedValue = 0, NewValue;
-        int RetCode = 0;
-        for (currentRow = 0; currentRow < RowCount; ++currentRow) {
-            for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
-                RetCode = SourceMatrix.GetValue(ref GettedValue, currentRow, currentCollumn);
-                if (RetCode != 0) {
+        int rowCount = sourceMatrix.GetRowCount(), columnCount = sourceMatrix.GetColumnCount()
+        , currentRow, currentColumn;
+        MatrixValue retrievedValue = 0, newValue;
+        int retCode = 0;
+        for (currentRow = 0; currentRow < rowCount; ++currentRow)
+        {
+            for (currentColumn = 0; currentColumn < columnCount; ++currentColumn)
+            {
+                retCode = sourceMatrix.GetValue(ref retrievedValue, currentRow, currentColumn);
+                if (retCode != 0)
+                {
                     return 1;
                 }
-                NewValue = GettedValue;
-                NewValue /= Determinant;
-                OutMatrix.SetValue(NewValue, currentRow, currentCollumn);
+                newValue = retrievedValue;
+                newValue /= determinant;
+                outMatrix.SetValue(newValue, currentRow, currentColumn);
             }
         }
         return 0;
     }
 
-    public int MullMatrix(ref Matrix SourceMatrix, MatrixValue Value) {
-        int RowCount = SourceMatrix.GetRowCount(), ColumnCount = SourceMatrix.GetColumnCount()
-    , currentRow, currentCollumn, RetCode;
-        MatrixValue NewValue = 0;
-        for (currentRow = 0; currentRow < RowCount; ++currentRow) {
-            for (currentCollumn = 0; currentCollumn < ColumnCount; ++currentCollumn) {
-                RetCode = SourceMatrix.GetValue(ref NewValue, currentRow, currentCollumn);
-                if (RetCode != 0) {
+    public int MullMatrix(Matrix sourceMatrix, MatrixValue value)
+    {
+        int rowCount = sourceMatrix.GetRowCount(), columnCount = sourceMatrix.GetColumnCount()
+        , currentRow, currentColumn, retCode;
+        MatrixValue newValue = 0;
+        for (currentRow = 0; currentRow < rowCount; ++currentRow)
+        {
+            for (currentColumn = 0; currentColumn < columnCount; ++currentColumn)
+            {
+                retCode = sourceMatrix.GetValue(ref newValue, currentRow, currentColumn);
+                if (retCode != 0)
+                {
                     return 1;
                 }
-                NewValue *= Value;
-                SourceMatrix.SetValue(NewValue, currentRow, currentCollumn);
+                newValue *= value;
+                sourceMatrix.SetValue(newValue, currentRow, currentColumn);
             }
         }
         return 0;
     }
-    private MatrixValue GetRandomMatrixValue(MatrixValue MinValue, MatrixValue MaxValue) {
-        return MinValue + (GetRandomInstance().NextDouble() * (MaxValue - MinValue));
+
+    private MatrixValue GetRandomMatrixValue(MatrixValue minValue, MatrixValue maxValue)
+    {
+        return minValue + (GetRandomInstance().NextDouble() * (maxValue - minValue));
     }
-    private int GenerateRandomNumber(int minValue, int maxValue) {
+
+    private int GenerateRandomNumber(int minValue, int maxValue)
+    {
         return GetRandomInstance().Next(minValue, maxValue + 1);
     }
+
 }
 
 class SmartMatrix : Matrix, ICloneable, IComparable<SmartMatrix> {
 
-    private MatrixUtils Utils = new MatrixUtils();
+    private MatrixMatrixUtils MatrixUtils = new MatrixMatrixUtils();
     public MatrixValue Determinant = 0;
 
     public SmartMatrix() : base() { }
 
-    SmartMatrix(ref SmartMatrix BasedObject) {
-        SmartMatrix NewObject = this;
-        CloneRef(ref NewObject, ref BasedObject);
+    SmartMatrix(SmartMatrix basedObject)
+    {
+        SmartMatrix newObject = this;
+        CloneRef(newObject, basedObject);
     }
-    public new object Clone() {
-        SmartMatrix ClonnedObject;
-        CloneOut(out ClonnedObject);
-        return ClonnedObject;
+    public new object Clone()
+    {
+        SmartMatrix clonedObject;
+        CloneOut(out clonedObject);
+        return clonedObject;
     }
-    public void CloneOut(out SmartMatrix NewObject) {
-        NewObject = new SmartMatrix();
-        SmartMatrix BasedObject = this;
-        CloneRef(ref NewObject, ref BasedObject);
+    public void CloneOut(out SmartMatrix newObject)
+    {
+        newObject = new SmartMatrix();
+        SmartMatrix basedObject = this;
+        CloneRef(newObject, basedObject);
     }
-    public void CloneRef(ref SmartMatrix NewObject, ref SmartMatrix BasedObject) {
-        Matrix BaseTypeThisObject = this;
-        Matrix BaseTypeNewObject = NewObject;
-        base.CloneRef(ref BaseTypeThisObject, ref BaseTypeNewObject);
-        NewObject.Determinant = BasedObject.Determinant;
+    public void CloneRef(SmartMatrix newObject, SmartMatrix basedObject)
+    {
+        Matrix baseTypeThisObject = this;
+        Matrix baseTypeNewObject = newObject;
+        base.CloneRef(baseTypeThisObject, baseTypeNewObject);
+        newObject.Determinant = basedObject.Determinant;
     }
 
-    public SmartMatrix(ref MatrixData SourceDara) : base(ref SourceDara) {
+    public SmartMatrix(MatrixData sourceData) : base(sourceData)
+    {
         CalcDeterminant();
     }
-    public void CalcDeterminant() {
-        Matrix BaseTypeClass = (Matrix)this;
-        int RetCode = 0;
-        RetCode = Utils.DetermineDeterminant(ref BaseTypeClass, ref this.Determinant);
-        if (RetCode != 0) {
+    public void CalcDeterminant()
+    {
+        int retCode = MatrixUtils.DetermineDeterminant(this, ref this.Determinant);
+        if (retCode != 0)
+        {
             throw new SmartMatrixExceptionCalculating("Ошибка вычисления детерминанта");
         }
     }
-    public void FillRandomValues() {
-        Matrix BaseTypeClass = (Matrix)this;
-        int RetCode = 0;
-        Utils.FillRandomValues(ref BaseTypeClass);
+    public void FillRandomValues()
+    {
+        Matrix baseTypeClass = (Matrix)this;
+        MatrixUtils.FillRandomValues(baseTypeClass);
         this.CalcDeterminant();
     }
-    public double GetDeterminant() {
+
+    public double GetDeterminant()
+    {
         return Determinant;
     }
-    public SmartMatrix GetInverseMatrix() {
-        Matrix BasedTypeObject = this;
-        SmartMatrix OutSmartMatrix = new SmartMatrix();
-        Matrix OutMatrix = OutSmartMatrix;
-        int RetCode = 0;
-        RetCode = Utils.GetInverseMatrix(ref BasedTypeObject, ref OutMatrix);
-        if (RetCode != 0) {
+
+    public SmartMatrix GetInverseMatrix()
+    {
+        Matrix basedTypeObject = this;
+        SmartMatrix outSmartMatrix = new SmartMatrix();
+        Matrix outMatrix = outSmartMatrix;
+        int retCode = MatrixUtils.GetInverseMatrix(basedTypeObject, outMatrix);
+        if (retCode != 0)
+        {
             throw new SmartMatrixException("Ошибка получения инверсонной матрицы");
         }
-        OutSmartMatrix.CalcDeterminant();
-        return OutSmartMatrix;
-    }
-    public SmartMatrix(ref IEnumerable<MatrixRow> IList) : base(ref IList) {
-        CalcDeterminant();
-    }
-    public SmartMatrix(ref IEnumerable<IEnumerable<MatrixValue>> IList) : base(ref IList) {
-        CalcDeterminant();
-    }
-    public static SmartMatrix operator +(SmartMatrix Left, SmartMatrix Right) {
-        SmartMatrix ReturnMatrix = new SmartMatrix(ref Left);
-        Matrix LeftMatrix = ReturnMatrix;
-        Matrix RightMatrix = Right;
-        ReturnMatrix.Utils.AddMatrix(ref LeftMatrix, ref RightMatrix);
-        return ReturnMatrix;
+        outSmartMatrix.CalcDeterminant();
+        return outSmartMatrix;
     }
 
-    public static SmartMatrix operator *(SmartMatrix Left, MatrixValue Value) {
-        SmartMatrix ReturnMatrix = new SmartMatrix(ref Left);
-        Matrix LeftMatrix = ReturnMatrix;
-        ReturnMatrix.Utils.MullMatrix(ref LeftMatrix, Value);
-        return ReturnMatrix;
+    public SmartMatrix(IEnumerable<MatrixRow> iList) : base(iList)
+    {
+        CalcDeterminant();
     }
 
-    public override string ToString() {
-        Matrix BasedTypeObject = this;
-        string OutputString = "";
-        this.Utils.PrintMatrix(ref BasedTypeObject, ref OutputString);
-        OutputString += "Determinant: " + Determinant + "\n";
-        return OutputString;
+    public SmartMatrix(IEnumerable<IEnumerable<MatrixValue>> iList) : base(iList)
+    {
+        CalcDeterminant();
     }
-    public int CompareTo(SmartMatrix OtherMatrix) {
-        return this.Determinant.CompareTo(OtherMatrix.Determinant);
+
+    public static SmartMatrix operator +(SmartMatrix left, SmartMatrix right)
+    {
+        SmartMatrix returnMatrix = new SmartMatrix(left);
+        Matrix leftMatrix = returnMatrix;
+        Matrix rightMatrix = right;
+        returnMatrix.MatrixUtils.AddMatrix(leftMatrix, rightMatrix);
+        return returnMatrix;
     }
-    public override bool Equals(object OtherObjet) {
-        if (OtherObjet == null || GetType() != OtherObjet.GetType()) {
+
+    public static SmartMatrix operator *(SmartMatrix left, MatrixValue value)
+    {
+        SmartMatrix returnMatrix = new SmartMatrix(left);
+        Matrix leftMatrix = returnMatrix;
+        returnMatrix.MatrixUtils.MullMatrix(leftMatrix, value);
+        return returnMatrix;
+    }
+
+    public override string ToString()
+    {
+        string outputString = "";
+        this.MatrixUtils.PrintMatrix(this, ref outputString);
+        outputString += "Determinant: " + Determinant + "\n";
+        return outputString;
+    }
+
+    public int CompareTo(SmartMatrix otherMatrix)
+    {
+        return this.Determinant.CompareTo(otherMatrix.Determinant);
+    }
+
+    public override bool Equals(object otherObject)
+    {
+        if (otherObject == null || GetType() != otherObject.GetType())
+        {
             return false;
         }
         return true;
     }
-    public bool EqualsValuse(object OtherObjet) {
-        if (Equals(OtherObjet)) {
-            SmartMatrix OtherMatrix = (SmartMatrix)OtherObjet;
-            if (this.Determinant == OtherMatrix.Determinant) {
-                Matrix ThisObjectMatrixType = this,
-                        OtherObjectMatrixType = OtherMatrix;
-                if (Utils.IsMatrixEqual(ref ThisObjectMatrixType, ref OtherObjectMatrixType)) {
+
+    public bool EqualsValues(object otherObject)
+    {
+        if (Equals(otherObject))
+        {
+            SmartMatrix otherMatrix = (SmartMatrix)otherObject;
+            if (this.Determinant == otherMatrix.Determinant)
+            {
+                Matrix thisObjectMatrixType = this;
+                Matrix otherObjectMatrixType = otherMatrix;
+                if (MatrixUtils.IsMatrixEqual(thisObjectMatrixType, otherObjectMatrixType))
+                {
                     return true;
                 }
             }
         }
         return false;
     }
-    public override int GetHashCode() {
+
+    public override int GetHashCode()
+    {
         return base.GetHashCode();
     }
 
-    public static bool operator >(SmartMatrix Left, SmartMatrix Right) {
-        return Left.Determinant > Right.Determinant;
+    public static bool operator >(SmartMatrix left, SmartMatrix right)
+    {
+        return left.Determinant > right.Determinant;
     }
 
-    public static bool operator <(SmartMatrix Left, SmartMatrix Right) {
-        return Left.Determinant < Right.Determinant;
-    }
-    public static bool operator ==(SmartMatrix Left, SmartMatrix Right) {
-
-        return Left.Determinant == Right.Determinant;
-    }
-    public static bool operator !=(SmartMatrix Left, SmartMatrix Right) {
-        return Left.Determinant != Right.Determinant;
+    public static bool operator <(SmartMatrix left, SmartMatrix right)
+    {
+        return left.Determinant < right.Determinant;
     }
 
-    public static bool operator <=(SmartMatrix Left, SmartMatrix Right) {
-        return !(Left.Determinant > Right.Determinant);
+    public static bool operator ==(SmartMatrix left, SmartMatrix right)
+    {
+        return left.Determinant == right.Determinant;
     }
-    public static bool operator >=(SmartMatrix Left, SmartMatrix Right) {
-        return !(Left.Determinant < Right.Determinant);
+
+    public static bool operator !=(SmartMatrix left, SmartMatrix right)
+    {
+        return left.Determinant != right.Determinant;
+    }
+
+    public static bool operator <=(SmartMatrix left, SmartMatrix right)
+    {
+        return !(left.Determinant > right.Determinant);
+    }
+
+    public static bool operator >=(SmartMatrix left, SmartMatrix right)
+    {
+        return !(left.Determinant < right.Determinant);
     }
 }
 
@@ -874,5 +1187,155 @@ public class SmartMatrixExceptionCalculating : SmartMatrixException {
        : base(message) { }
     public override string ToString() {
         return base.ToString();
+    }
+}
+
+
+public static class MatrixExtensions 
+{
+    public static void Transpose(this Matrix matrix)
+    {
+        int rowCount = matrix.GetRowCount();
+        int columnCount = matrix.GetColumnCount();
+
+        MatrixData transposedData = new MatrixData();
+
+        for (int rowIndex = 0; rowIndex < columnCount; ++rowIndex)
+        {
+            MatrixRow newRow = new MatrixRow();
+
+            for (int columnIndex = 0; columnIndex < rowCount; ++columnIndex)
+            {
+                MatrixValue value = 0;
+                matrix.GetValue(ref value, columnIndex, rowIndex);
+                newRow.Add(value);
+            }
+
+            transposedData.Add(newRow);
+        }
+
+        matrix.SetSize(columnCount, rowCount);
+        matrix.SetData(transposedData);
+    }
+
+     public static MatrixValue Trace(this Matrix matrix)
+    {
+        int rowCount = matrix.GetRowCount();
+        int columnCount = matrix.GetColumnCount();
+
+        MatrixValue trace = 0;
+
+        int minDim = Math.Min(rowCount, columnCount);
+
+        for (int i = 0; i < minDim; i++)
+        {
+            MatrixValue value = 0;
+            matrix.GetValue(ref value, i, i);
+            trace += value;
+        }
+        return trace;
+    }
+
+    // Ваши поля, свойства и методы для класса Matrix
+
+    // Создаем делегат Action, который принимает объект Matrix
+    public delegate void DiagonalizeMatrixDelegate(Matrix matrix);
+
+    // Пример анонимного метода для приведения матрицы к диагональному виду
+    public static DiagonalizeMatrixDelegate DiagonalizeMatrix = delegate (Matrix matrix)
+    {
+        int rowCount = matrix.GetRowCount();
+        int columnCount = matrix.GetColumnCount();
+
+        // Пример приведения матрицы к диагональному виду
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
+        {
+            for (int columnIndex = 0; columnIndex < columnCount; ++columnIndex)
+            {
+                if (rowIndex != columnIndex)
+                {
+                    matrix.SetValue(0, rowIndex, columnIndex);
+                }
+            }
+        }
+    };
+}
+
+public class CalculationHandler
+{
+    public delegate void CalculationDelegate();
+    
+    private CalculationHandler nextHandler;
+
+    private DateTime blockHandle;
+    private double sleepMilliSeconds;
+    string nameHandler;
+    //Типы возможномныых перечислений
+    public enum TypeHandleEvents
+    {
+        CreateMatix1,
+        CreateMatix2,
+        FillRandomMatrix,
+        ChooseFillMatrix,
+        PrintMatrix,
+        PrintInverseMatrix,
+        GetHashCode,
+        ChooseCompareMatrix,
+        TransposeMatrix,
+        TraceMatrix,
+    };
+    Dictionary<TypeHandleEvents, CalculationDelegate> listHandle = new Dictionary<TypeHandleEvents, CalculationDelegate>();
+
+    public CalculationHandler(string name, double sleepMilliSeconds) {
+        this.sleepMilliSeconds = sleepMilliSeconds;
+        //Начальное время
+        blockHandle = DateTime.Now;
+        this.nameHandler = name;
+    }
+
+    public void AddDelegate(TypeHandleEvents typeEvent, CalculationDelegate customDelegate)
+    {
+        if (listHandle.ContainsKey(typeEvent))
+        {
+            listHandle[typeEvent] = customDelegate;
+        }
+        else
+        {
+            listHandle.Add(typeEvent, customDelegate);
+        }
+    }
+
+    public void SetNextHandler(CalculationHandler nextHandler)
+    {
+        this.nextHandler = nextHandler;
+    }
+
+    public void HandleRequest(CalculationHandler.TypeHandleEvents typeEvent)
+    {
+        // Если есть делегат, выполняем вычисление
+        Console.WriteLine(nameHandler);
+        if (listHandle.ContainsKey(typeEvent))
+        {
+            if ( DateTime.Now >= blockHandle)
+            {
+                Console.WriteLine("Это я умею, говори что делать");
+
+                blockHandle = DateTime.Now;
+                blockHandle = blockHandle.AddMilliseconds(sleepMilliSeconds);
+                listHandle[typeEvent]();
+
+            }
+            else
+            {
+                Console.WriteLine("Я очень занят, не могу, попроси другого");
+                nextHandler?.HandleRequest(typeEvent);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Это не не ко мне, я такое не умею");
+            //Иначе передаём следующему
+            nextHandler?.HandleRequest(typeEvent);
+        }
     }
 }
